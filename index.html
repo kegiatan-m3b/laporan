@@ -40,6 +40,7 @@
         <a class="nav-link" data-id="select-role" onclick="showPage('select-role')"><i class="fas fa-plus-circle me-2"></i> Input Laporan</a>
         <a class="nav-link" data-id="dashboard" onclick="showPage('dashboard')"><i class="fas fa-history me-2"></i> Riwayat</a>
         <a class="nav-link" data-id="arsip" onclick="showPage('arsip')"><i class="fas fa-archive me-2"></i> Arsip</a>
+        <a class="nav-link" data-id="manage-anggaran" onclick="showPage('manage-anggaran')"><i class="fas fa-money-check-alt me-2"></i> Kelola Anggaran</a>
         <a class="nav-link" data-id="info-anggaran" onclick="showPage('info-anggaran')"><i class="fas fa-wallet me-2"></i> Info Anggaran</a>
       </div>
       
@@ -185,7 +186,7 @@
     </div>
   </div>
 
-  <!-- MENU KELOLA ANGGARAN (ADMIN) -->
+  <!-- MENU KELOLA ANGGARAN (ADMIN & PETUGAS) -->
   <div id="page-manage-anggaran" class="hidden">
     <div class="glass-card">
       <div class="d-flex justify-content-between mb-3">
@@ -266,14 +267,16 @@
   </div>
 </div>
 
-<!-- MODAL TAMBAH ANGGARAN -->
+<!-- MODAL TAMBAH ANGGARAN (Input Jenis Laporan Diubah Jadi Dropdown) -->
 <div class="modal fade" id="modalAnggaran" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header"><h5 class="modal-title">Atur Total Anggaran</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
       <div class="modal-body">
         <label class="small text-muted">Jenis Laporan / Kegiatan</label>
-        <input type="text" id="inpJenisAnggaran" class="form-control mb-2" placeholder="Misal: Lomba Atletik">
+        <select id="inpJenisAnggaran" class="form-select mb-2">
+            <option value="">- Pilih Jenis Laporan -</option>
+        </select>
         <label class="small text-muted">Total Anggaran (Angka saja)</label>
         <input type="number" id="inpTotalAnggaran" class="form-control mb-3" placeholder="Misal: 10000000">
         <button onclick="saveAnggaran()" class="btn btn-primary w-100">Simpan Anggaran</button>
@@ -298,8 +301,7 @@ async function callGAS(action, data = {}) {
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify({ action: action, data: data })
     });
-    const result = await response.json();
-    return result;
+    return await response.json();
   } catch (error) {
     console.error("Fetch Error: ", error);
     Swal.fire('Error Koneksi', 'Gagal menghubungi server database (Google Script).', 'error');
@@ -329,20 +331,27 @@ async function doLogin() {
 
   try {
     const res = await callGAS('loginUser', { username: u, password: p });
-    btn.innerHTML = 'MASUK'; btn.disabled = false;
     
     if(res.status === 'success') {
       currentUser = res; document.body.classList.add('logged-in'); document.getElementById('sidebar').style.display = 'flex'; document.getElementById('page-login').classList.add('hidden');
       resetMenus();
+      
+      // Ambil Konfigurasi Form dan Anggaran PADA SAAT BERHASIL LOGIN
+      rawConfig = await callGAS('getFormConfig');
       await loadAnggaranServer();
+      
+      btn.innerHTML = 'MASUK'; btn.disabled = false;
       
       if(res.role === 'Admin') { document.getElementById('menu-admin').classList.remove('hidden'); showPage('manage-user'); } 
       else { 
         document.getElementById('menu-'+res.role.toLowerCase()).classList.remove('hidden'); 
-        if(res.role === 'Petugas') { loadConfigAndShow('select-role'); loadDashboardServer(true); }
+        if(res.role === 'Petugas') { showPage('select-role'); loadDashboardServer(true); }
         else { showPage('dashboard'); loadDashboardServer(true); }
       }
-    } else { Swal.fire('Gagal', res.message, 'error'); }
+    } else { 
+      btn.innerHTML = 'MASUK'; btn.disabled = false;
+      Swal.fire('Gagal', res.message, 'error'); 
+    }
   } catch(e) {
     btn.innerHTML = 'MASUK'; btn.disabled = false;
   }
@@ -408,11 +417,25 @@ function renderAnggaranTables() {
   });
 }
 
-function openModalAnggaran() { new bootstrap.Modal(document.getElementById('modalAnggaran')).show(); }
+// BUKA MODAL TAMBAH ANGGARAN
+function openModalAnggaran() { 
+  const sel = document.getElementById('inpJenisAnggaran');
+  sel.innerHTML = '<option value="">- Pilih Jenis Laporan -</option>';
+  
+  // Ambil pilihan opsi dari rawConfig (data diambil dari FormConfig Label "Jenis Laporan")
+  const configJenisLaporan = rawConfig.find(c => c.label.toLowerCase() === 'jenis laporan');
+  if(configJenisLaporan && configJenisLaporan.options) {
+      configJenisLaporan.options.forEach(opt => {
+          if(opt.trim()) sel.innerHTML += `<option value="${opt.trim()}">${opt.trim()}</option>`;
+      });
+  }
+  
+  new bootstrap.Modal(document.getElementById('modalAnggaran')).show(); 
+}
 
 async function saveAnggaran() {
   const d = { nama: document.getElementById('inpJenisAnggaran').value, total: document.getElementById('inpTotalAnggaran').value };
-  if(!d.nama || !d.total) return Swal.fire('Error','Lengkapi data anggaran!','warning');
+  if(!d.nama || !d.total) return Swal.fire('Error','Pilih Jenis Laporan dan isi Anggaran!','warning');
   document.getElementById('loading').classList.remove('hidden');
   
   await callGAS('manageAnggaran', { action: 'add', anggaranData: d });
@@ -608,20 +631,37 @@ async function handleSubmit(e) {
 
 function selectRole(role) { document.getElementById('inputTipeLaporan').value = role; document.getElementById('inputEditRowIndex').value = ""; document.getElementById('formTitle').innerText = "Form Input"; document.getElementById('revisionAlert').classList.add('hidden'); document.getElementById('btnSubmit').innerText = "Kirim Laporan"; renderForm(role); showPage('form'); }
 
+// MERENDER FORM (Menyesuaikan "Nama Kegiatan" menjadi Dropdown dari FormConfig)
 function renderForm(role) { 
   const box = document.getElementById('formBuilder'); box.innerHTML = ''; 
   const config = rawConfig.filter(i => (i.category||'umum').toLowerCase() === 'umum' || (i.category||'').toLowerCase() === role.toLowerCase());
   
+  // Ambil data referensi dari "Jenis Laporan"
+  const configJenisLaporan = rawConfig.find(c => c.label.toLowerCase() === 'jenis laporan');
+
   config.forEach(i => { 
     let html = `<div class="col-md-6 mb-2"><label class="small fw-bold">${i.label}</label>`; 
     
-    if(i.label.toLowerCase() === 'jenis laporan' || i.label.toLowerCase() === 'jenis kegiatan') {
-       html += `<select class="form-select" name="${i.key}" required><option value="">- Pilih Jenis Laporan -</option>`;
-       globalAnggaran.forEach(a => { html += `<option value="${a.nama}">${a.nama}</option>`; });
-       html += `</select>`;
+    let isDropdown = false;
+    let optionsToUse = [];
+
+    // Jika yang di-render adalah "Nama Kegiatan" atau "Jenis Laporan", maka bentuk jadi Dropdown, datanya copy dari FormConfig "Jenis Laporan"
+    if (i.label.toLowerCase() === 'nama kegiatan' || i.label.toLowerCase() === 'jenis laporan') {
+        isDropdown = true;
+        if (configJenisLaporan && configJenisLaporan.options) optionsToUse = configJenisLaporan.options;
+    } 
+    // Atau jika memang di FormConfig diset tipe 'select' (dropdown)
+    else if (i.type === 'select') {
+        isDropdown = true;
+        optionsToUse = i.options;
     }
-    else if(i.type === 'select') { 
-      html += `<select class="form-select" name="${i.key}"><option value="">-</option>`; i.options.forEach(o => html += `<option value="${o.trim()}">${o.trim()}</option>`); html += `</select>`; 
+
+    if (isDropdown) {
+       html += `<select class="form-select" name="${i.key}" required><option value="">- Pilih ${i.label} -</option>`;
+       optionsToUse.forEach(o => { 
+         if(o.trim()) html += `<option value="${o.trim()}">${o.trim()}</option>`; 
+       });
+       html += `</select>`;
     } 
     else if(i.type === 'file') { html += `<input type="file" class="form-control" accept="application/pdf">`; } 
     else { html += `<input type="text" class="form-control" name="${i.key}">`; } 
@@ -631,8 +671,10 @@ function renderForm(role) {
 }
 
 async function loadConfigAndShow(id) { 
-  const c = await callGAS('getFormConfig'); 
-  rawConfig = c; showPage(id); 
+  // Konfigurasi ini sebenarnya sudah ditarik di awal saat login. 
+  // Ditambahkan ini hanya untuk memastikan jika terlewat.
+  if(rawConfig.length === 0) rawConfig = await callGAS('getFormConfig'); 
+  showPage(id); 
 }
 
 async function loadManageUsers() { 
