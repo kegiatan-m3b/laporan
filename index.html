@@ -631,12 +631,11 @@ async function handleSubmit(e) {
 
 function selectRole(role) { document.getElementById('inputTipeLaporan').value = role; document.getElementById('inputEditRowIndex').value = ""; document.getElementById('formTitle').innerText = "Form Input"; document.getElementById('revisionAlert').classList.add('hidden'); document.getElementById('btnSubmit').innerText = "Kirim Laporan"; renderForm(role); showPage('form'); }
 
-// MERENDER FORM (Menyesuaikan "Nama Kegiatan" menjadi Dropdown dari FormConfig)
+// MERENDER FORM (Penyuntikan Form LPJ ke- dan Total Anggaran)
 function renderForm(role) { 
   const box = document.getElementById('formBuilder'); box.innerHTML = ''; 
   const config = rawConfig.filter(i => (i.category||'umum').toLowerCase() === 'umum' || (i.category||'').toLowerCase() === role.toLowerCase());
   
-  // Ambil data referensi dari "Jenis Laporan"
   const configJenisLaporan = rawConfig.find(c => c.label.toLowerCase() === 'jenis laporan');
 
   config.forEach(i => { 
@@ -645,12 +644,10 @@ function renderForm(role) {
     let isDropdown = false;
     let optionsToUse = [];
 
-    // Jika yang di-render adalah "Nama Kegiatan" atau "Jenis Laporan", maka bentuk jadi Dropdown, datanya copy dari FormConfig "Jenis Laporan"
     if (i.label.toLowerCase() === 'nama kegiatan' || i.label.toLowerCase() === 'jenis laporan') {
         isDropdown = true;
         if (configJenisLaporan && configJenisLaporan.options) optionsToUse = configJenisLaporan.options;
     } 
-    // Atau jika memang di FormConfig diset tipe 'select' (dropdown)
     else if (i.type === 'select') {
         isDropdown = true;
         optionsToUse = i.options;
@@ -668,11 +665,22 @@ function renderForm(role) {
     
     box.innerHTML += html + `</div>`; 
   });
+
+  // --- INJEKSI KHUSUS UNTUK FORM LPJ ---
+  if (role.toLowerCase() === 'lpj') {
+    // 1. Dropdown LPJ ke-
+    let htmlLpjKe = `<div class="col-md-6 mb-2"><label class="small fw-bold">LPJ ke-</label><select class="form-select" name="LPJ_ke" required><option value="">- Pilih -</option>`;
+    for(let j=1; j<=10; j++) { htmlLpjKe += `<option value="${j}">${j}</option>`; }
+    htmlLpjKe += `</select></div>`;
+    
+    // 2. Input Total Anggaran (yang secara otomatis memotong saldo backend)
+    let htmlTotalAnggaran = `<div class="col-md-6 mb-2"><label class="small fw-bold">Total Anggaran (Rp)</label><input type="number" class="form-control" name="Total_Anggaran" placeholder="Hanya angka, cth: 1500000" required></div>`;
+    
+    box.innerHTML += htmlLpjKe + htmlTotalAnggaran;
+  }
 }
 
 async function loadConfigAndShow(id) { 
-  // Konfigurasi ini sebenarnya sudah ditarik di awal saat login. 
-  // Ditambahkan ini hanya untuk memastikan jika terlewat.
   if(rawConfig.length === 0) rawConfig = await callGAS('getFormConfig'); 
   showPage(id); 
 }
