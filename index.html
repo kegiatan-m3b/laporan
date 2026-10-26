@@ -267,7 +267,7 @@
   </div>
 </div>
 
-<!-- MODAL TAMBAH ANGGARAN (Penambahan opsi LPJ_ke-) -->
+<!-- MODAL TAMBAH ANGGARAN -->
 <div class="modal fade" id="modalAnggaran" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -347,16 +347,18 @@ async function doLogin() {
       currentUser = res; document.body.classList.add('logged-in'); document.getElementById('sidebar').style.display = 'flex'; document.getElementById('page-login').classList.add('hidden');
       resetMenus();
       
+      // Ambil Konfigurasi dan Semua Data Riwayat terlebih dahulu
       rawConfig = await callGAS('getFormConfig');
-      await loadAnggaranServer();
+      await loadDashboardServer(true);
+      await loadAnggaranServer(); // Proses tabel anggaran dinamis
       
       btn.innerHTML = 'MASUK'; btn.disabled = false;
       
       if(res.role === 'Admin') { document.getElementById('menu-admin').classList.remove('hidden'); showPage('manage-user'); } 
       else { 
         document.getElementById('menu-'+res.role.toLowerCase()).classList.remove('hidden'); 
-        if(res.role === 'Petugas') { showPage('select-role'); loadDashboardServer(true); }
-        else { showPage('dashboard'); loadDashboardServer(true); }
+        if(res.role === 'Petugas') { showPage('select-role'); }
+        else { showPage('dashboard'); }
       }
     } else { 
       btn.innerHTML = 'MASUK'; btn.disabled = false;
@@ -391,7 +393,10 @@ function showPage(id) {
   if(id === 'dashboard') applyFilter(); 
   if(id === 'arsip') loadArchive();
   if(id === 'manage-user') loadManageUsers();
-  if(id === 'manage-anggaran' || id === 'info-anggaran') loadAnggaranServer();
+  
+  if(id === 'manage-anggaran' || id === 'info-anggaran') {
+      loadDashboardServer(true).then(() => loadAnggaranServer());
+  }
 }
 
 async function saveNewPassword() {
@@ -412,18 +417,71 @@ async function loadAnggaranServer() {
   renderAnggaranTables();
 }
 
+// FUNGSI PEMECAHAN OTOMATIS BERDASARKAN LPJ_KE-
 function renderAnggaranTables() {
   const tbManage = document.getElementById('anggaranTableBody'), tbInfo = document.getElementById('infoAnggaranTableBody');
   if(tbManage) tbManage.innerHTML = ''; if(tbInfo) tbInfo.innerHTML = '';
   
   globalAnggaran.forEach(a => {
-    let fmtTotal = 'Rp ' + Number(a.total).toLocaleString('id-ID');
-    let fmtPakai = 'Rp ' + Number(a.terpakai).toLocaleString('id-ID');
-    let fmtSisa = 'Rp ' + Number(a.sisa).toLocaleString('id-ID');
-    let bgSisa = a.sisa < 0 ? 'bg-danger' : (a.sisa == 0 ? 'bg-warning' : 'bg-success');
+    let isSpecificLPJ = a.nama.includes('LPJ_ke-');
+    let dynamicTerpakai = 0;
+    let subLpjs = [];
     
-    if(tbManage) { tbManage.innerHTML += `<tr><td>${a.nama}</td><td>${fmtTotal}</td><td>${fmtPakai}</td><td>${fmtSisa}</td><td><button onclick="delAnggaran('${a.nama}')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></td></tr>`; }
-    if(tbInfo) { tbInfo.innerHTML += `<tr><td class="text-start ps-3">${a.nama}</td><td class="text-end">${fmtTotal}</td><td class="text-end">${fmtPakai}</td><td class="text-center"><span class="badge ${bgSisa} w-75 p-2">${fmtSisa}</span></td></tr>`; }
+    // Tarik data riwayat LPJ untuk membentuk breakdown tabel dinamis
+    if (!isSpecificLPJ && globalData && globalData.length > 0) {
+        subLpjs = globalData.filter(r => {
+            let cleanRow = {}; for(let k in r) cleanRow[k.toLowerCase().trim()] = r[k];
+            let keg = (cleanRow['kegiatan'] || cleanRow['nama kegiatan'] || cleanRow['nama_kegiatan'] || '').toString().trim();
+            let isLpj = r['Jenis_Laporan'] === 'LPJ';
+            let lpjKe = cleanRow['lpj_ke'] || cleanRow['lpj ke'] || '';
+            return isLpj && keg === a.nama && lpjKe !== '';
+        });
+        
+        subLpjs.forEach(sub => {
+            let nominalSub = 0;
+            for(let key in sub) {
+                if (key.toLowerCase().includes('anggaran') || key.toLowerCase().includes('biaya') || key.toLowerCase().includes('nominal') || key.toLowerCase().includes('total')) {
+                    let val = parseInt(sub[key].toString().replace(/[^0-9]/g, ''), 10);
+                    if (!isNaN(val) && val > 0) nominalSub = val;
+                }
+            }
+            sub.nominalUsed = nominalSub; // Menyimpan nominal asli yg diketik user
+            dynamicTerpakai += nominalSub;
+        });
+    }
+
+    // Kalkulasi
+    let finalTerpakai = (dynamicTerpakai > 0 || subLpjs.length > 0) ? dynamicTerpakai : parseFloat(a.terpakai || 0);
+    let finalSisa = parseFloat(a.total || 0) - finalTerpakai;
+
+    let fmtTotal = 'Rp ' + Number(a.total).toLocaleString('id-ID');
+    let fmtPakai = 'Rp ' + Number(finalTerpakai).toLocaleString('id-ID');
+    let fmtSisa = 'Rp ' + Number(finalSisa).toLocaleString('id-ID');
+    let bgSisa = finalSisa < 0 ? 'bg-danger' : (finalSisa == 0 ? 'bg-warning' : 'bg-success');
+    
+    // Tampilkan Pagu Utama
+    if(tbManage) { tbManage.innerHTML += `<tr><td class="fw-bold">${a.nama}</td><td>${fmtTotal}</td><td>${fmtPakai}</td><td>${fmtSisa}</td><td><button onclick="delAnggaran('${a.nama}')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></td></tr>`; }
+    if(tbInfo) { tbInfo.innerHTML += `<tr><td class="text-start ps-3 fw-bold">${a.nama}</td><td class="text-end">${fmtTotal}</td><td class="text-end">${fmtPakai}</td><td class="text-center"><span class="badge ${bgSisa} w-75 p-2">${fmtSisa}</span></td></tr>`; }
+    
+    // Tampilkan Rincian (Sub Row) yang dipecah per LPJ
+    if (subLpjs.length > 0) {
+        subLpjs.sort((x, y) => {
+            let kX = {}; for(let k in x) kX[k.toLowerCase().trim()] = x[k];
+            let kY = {}; for(let k in y) kY[k.toLowerCase().trim()] = y[k];
+            return parseInt(kX['lpj_ke']||0) - parseInt(kY['lpj_ke']||0);
+        });
+
+        subLpjs.forEach(sub => {
+            let kSub = {}; for(let k in sub) kSub[k.toLowerCase().trim()] = sub[k];
+            let fmtSub = 'Rp ' + Number(sub.nominalUsed).toLocaleString('id-ID');
+            
+            let subManageRow = `<tr class="table-light"><td class="text-start ps-4 text-muted"><i class="fas fa-level-up-alt fa-rotate-90 me-2"></i> ${a.nama} LPJ_ke-${kSub['lpj_ke']}</td><td class="text-end text-muted">-</td><td class="text-end text-muted">${fmtSub}</td><td colspan="2"></td></tr>`;
+            let subInfoRow = `<tr class="table-light"><td class="text-start ps-4 text-muted"><i class="fas fa-level-up-alt fa-rotate-90 me-2"></i> ${a.nama} LPJ_ke-${kSub['lpj_ke']}</td><td class="text-end text-muted">-</td><td class="text-end text-muted">${fmtSub}</td><td class="text-center">-</td></tr>`;
+            
+            if(tbManage) tbManage.innerHTML += subManageRow;
+            if(tbInfo) tbInfo.innerHTML += subInfoRow;
+        });
+    }
   });
 }
 
@@ -437,7 +495,6 @@ function openModalAnggaran() {
           if(opt.trim()) sel.innerHTML += `<option value="${opt.trim()}">${opt.trim()}</option>`;
       });
   }
-  
   new bootstrap.Modal(document.getElementById('modalAnggaran')).show(); 
 }
 
@@ -447,8 +504,6 @@ async function saveAnggaran() {
   const total = document.getElementById('inpTotalAnggaran').value;
   
   if(!jenis || !total) return Swal.fire('Error','Pilih Jenis Laporan dan isi Anggaran!','warning');
-  
-  // Menggabungkan Nama agar tampil otomatis dengan LPJ_ke jika dipilih
   let namaAkhir = lpjKe ? `${jenis} LPJ_ke-${lpjKe}` : jenis;
 
   document.getElementById('loading').classList.remove('hidden');
@@ -460,6 +515,7 @@ async function saveAnggaran() {
   document.getElementById('inpLpjKeAnggaran').value = ''; 
   document.getElementById('inpTotalAnggaran').value = '';
   
+  await loadDashboardServer(true);
   await loadAnggaranServer(); 
   document.getElementById('loading').classList.add('hidden');
   Swal.fire('Sukses', 'Anggaran Disimpan', 'success');
@@ -519,7 +575,7 @@ function viewReviewerNotes(rowIndex) {
   }
 }
 
-// FORMATTING UNTUK DAFTAR LAPORAN & RIWAYAT (Menampilkan tulisan LPJ_ke-)
+// RENDER TABLE (Menampilkan Nama Kegiatan + LPJ_ke-)
 function renderTable(data) {
   const tbody = document.getElementById('tableBody'); const thead = document.getElementById('tableHead'); tbody.innerHTML = '';
   thead.innerHTML = `<tr><th>Tgl</th><th>Jenis</th><th>Status</th><th>Kegiatan</th><th>Tahun Pelajaran</th><th>Semester</th><th>Bulan</th><th>Pembina/Pelatih</th><th>Ekstra</th><th>Jml Latihan</th><th>Aksi</th></tr>`;
@@ -529,7 +585,7 @@ function renderTable(data) {
     let cleanRow = {}; for (let key in r) { cleanRow[key.toString().trim().toLowerCase()] = r[key]; }
     let st = r['Status'], badge = st === 'Pending' ? 'bg-warning' : (st === 'Disetujui KA TU' ? 'bg-success' : (st === 'Ditolak' ? 'bg-danger' : 'bg-primary'));
     
-    let valKegiatan = cleanRow['kegiatan'] || cleanRow['nama kegiatan'] || cleanRow['nama_kegiatan'] || cleanRow['jenis laporan'] || '-';
+    let valKegiatan = cleanRow['kegiatan'] || cleanRow['nama kegiatan'] || cleanRow['nama_kegiatan'] || '-';
     let valTahun    = cleanRow['tahun pelajaran'] || cleanRow['tahun ajaran'] || cleanRow['tahun_pelajaran'] || '-';
     let valSemester = cleanRow['semester'] || '-';
     let valBulan    = cleanRow['bulan laporan'] || cleanRow['bulan'] || '-';
@@ -537,7 +593,7 @@ function renderTable(data) {
     let valEkstra   = cleanRow['cabang ekstra'] || cleanRow['ekstra'] || cleanRow['ekstrakurikuler'] || cleanRow['cabang_ekstra'] || '-';
     let valLatihan  = cleanRow['banyak latihan'] || cleanRow['jumlah latihan'] || cleanRow['jml latihan'] || cleanRow['banyak_latihan'] || '-';
     
-    // Menambahkan embel-embel LPJ_ke- di nama kegiatan jika field tersebut diisi pada saat LPJ
+    // Sisipkan LPJ_ke- pada Kegiatan
     let lpjKe = r['LPJ_ke'] || cleanRow['lpj_ke'] || cleanRow['lpj ke'] || '';
     if (r['Jenis_Laporan'] === 'LPJ' && lpjKe !== '') {
         valKegiatan = valKegiatan === '-' ? `LPJ_ke-${lpjKe}` : `${valKegiatan} LPJ_ke-${lpjKe}`;
@@ -627,9 +683,7 @@ async function loadArchive() {
   res.data.forEach(r => { 
     let keg = r.nama_kegiatan || r.kegiatan || r['Nama Kegiatan'] || r.Jenis_Laporan || '-';
     let lpj = r.LPJ_ke || r.lpj_ke || '';
-    if (r.Jenis_Laporan === 'LPJ' && lpj !== '') {
-        keg = keg === '-' ? `LPJ_ke-${lpj}` : `${keg} LPJ_ke-${lpj}`;
-    }
+    if (r.Jenis_Laporan === 'LPJ' && lpj !== '') keg = keg === '-' ? `LPJ_ke-${lpj}` : `${keg} LPJ_ke-${lpj}`;
     tbody.innerHTML += `<tr><td>${r.Timestamp}</td><td>${r.Jenis_Laporan}</td><td>${r.Username_Petugas}</td><td>${keg}</td><td class="text-center"><button onclick="openPdfViewer('${r.Link_File_PDF}')" class="btn btn-sm btn-info"><i class="fas fa-file-pdf"></i></button></td></tr>`; 
   }); 
 }
@@ -642,25 +696,11 @@ async function handleSubmit(e) {
   e.preventDefault();
   const form = document.getElementById('dynamicForm'); const obj = Object.fromEntries(new FormData(form).entries()); const fileIn = form.querySelectorAll('input[type="file"]'); obj.currentUser = currentUser.user; 
   
-  // =======================================================================
-  // INJEKSI NAMA KEGIATAN OTOMATIS AGAR PEMOTONGAN SALDO ANGGARAN PRESISI
-  // =======================================================================
-  if (obj.tipeLaporan === 'LPJ' && obj.LPJ_ke) {
-      let newMatches = {};
-      for (let key in obj) {
-          if (typeof obj[key] === 'string' && obj[key].trim() !== '') {
-              // Jika admin menggunakan "Lomba Atletik LPJ_ke-1", obj ini akan lolos filter backend
-              newMatches[key + '_combined'] = obj[key] + ' LPJ_ke-' + obj.LPJ_ke;
-          }
-      }
-      Object.assign(obj, newMatches); // Gabungkan key ke dalam object pengiriman
-  }
-
   const btn = document.getElementById('btnSubmit'); const btnText = btn.innerText; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Mengirim...'; btn.disabled = true; document.getElementById('loading').classList.remove('hidden');
 
   const processResponse = (res) => {
     document.getElementById('loading').classList.add('hidden'); btn.innerHTML = btnText; btn.disabled = false;
-    if(res === 'Sukses') { Swal.fire({ title: 'Berhasil!', text: 'Laporan Anda berhasil dikirim.', icon: 'success', timer: 2000, showConfirmButton: false }).then(() => { form.reset(); showPage('dashboard'); loadDashboardServer(true); loadAnggaranServer(); }); } 
+    if(res === 'Sukses') { Swal.fire({ title: 'Berhasil!', text: 'Laporan Anda berhasil dikirim.', icon: 'success', timer: 2000, showConfirmButton: false }).then(async () => { form.reset(); await loadDashboardServer(true); await loadAnggaranServer(); showPage('dashboard'); }); } 
     else { Swal.fire('Gagal', res, 'error'); }
   };
 
@@ -714,7 +754,7 @@ function renderForm(role) {
     box.innerHTML += html + `</div>`; 
   });
 
-  // --- INJEKSI KHUSUS UNTUK FORM LPJ ---
+  // --- INJEKSI FORM LPJ ---
   if (role.toLowerCase() === 'lpj') {
     let htmlLpjKe = `<div class="col-md-6 mb-2"><label class="small fw-bold">LPJ ke-</label><select class="form-select" name="LPJ_ke" required><option value="">- Pilih -</option>`;
     for(let j=1; j<=10; j++) { htmlLpjKe += `<option value="${j}">${j}</option>`; }
@@ -756,7 +796,6 @@ async function delUser(u) {
   }
 }
 
-// MENGAMBIL USERNAME SAAT APLIKASI PERTAMA KALI DIBUKA
 window.onload = async () => { 
   try {
     const users = await callGAS('getUsernames');
