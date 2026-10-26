@@ -186,7 +186,7 @@
     </div>
   </div>
 
-  <!-- MENU KELOLA ANGGARAN (ADMIN & PETUGAS) -->
+  <!-- MENU KELOLA ANGGARAN -->
   <div id="page-manage-anggaran" class="hidden">
     <div class="glass-card">
       <div class="d-flex justify-content-between mb-3">
@@ -202,7 +202,7 @@
     </div>
   </div>
 
-  <!-- MENU INFO ANGGARAN (SEMUA ROLE) -->
+  <!-- MENU INFO ANGGARAN -->
   <div id="page-info-anggaran" class="hidden">
     <div class="glass-card">
       <h4 class="mb-3">Informasi Sisa Anggaran</h4>
@@ -267,7 +267,7 @@
   </div>
 </div>
 
-<!-- MODAL TAMBAH ANGGARAN (Input Jenis Laporan Diubah Jadi Dropdown) -->
+<!-- MODAL TAMBAH ANGGARAN (Penambahan opsi LPJ_ke-) -->
 <div class="modal fade" id="modalAnggaran" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -277,6 +277,17 @@
         <select id="inpJenisAnggaran" class="form-select mb-2">
             <option value="">- Pilih Jenis Laporan -</option>
         </select>
+        
+        <label class="small text-muted">Anggaran Khusus LPJ ke- (Opsional)</label>
+        <select id="inpLpjKeAnggaran" class="form-select mb-2">
+            <option value="">- Semua / Berlaku Umum -</option>
+            <option value="1">1</option><option value="2">2</option>
+            <option value="3">3</option><option value="4">4</option>
+            <option value="5">5</option><option value="6">6</option>
+            <option value="7">7</option><option value="8">8</option>
+            <option value="9">9</option><option value="10">10</option>
+        </select>
+
         <label class="small text-muted">Total Anggaran (Angka saja)</label>
         <input type="number" id="inpTotalAnggaran" class="form-control mb-3" placeholder="Misal: 10000000">
         <button onclick="saveAnggaran()" class="btn btn-primary w-100">Simpan Anggaran</button>
@@ -336,7 +347,6 @@ async function doLogin() {
       currentUser = res; document.body.classList.add('logged-in'); document.getElementById('sidebar').style.display = 'flex'; document.getElementById('page-login').classList.add('hidden');
       resetMenus();
       
-      // Ambil Konfigurasi Form dan Anggaran PADA SAAT BERHASIL LOGIN
       rawConfig = await callGAS('getFormConfig');
       await loadAnggaranServer();
       
@@ -417,12 +427,10 @@ function renderAnggaranTables() {
   });
 }
 
-// BUKA MODAL TAMBAH ANGGARAN
 function openModalAnggaran() { 
   const sel = document.getElementById('inpJenisAnggaran');
   sel.innerHTML = '<option value="">- Pilih Jenis Laporan -</option>';
   
-  // Ambil pilihan opsi dari rawConfig (data diambil dari FormConfig Label "Jenis Laporan")
   const configJenisLaporan = rawConfig.find(c => c.label.toLowerCase() === 'jenis laporan');
   if(configJenisLaporan && configJenisLaporan.options) {
       configJenisLaporan.options.forEach(opt => {
@@ -434,12 +442,24 @@ function openModalAnggaran() {
 }
 
 async function saveAnggaran() {
-  const d = { nama: document.getElementById('inpJenisAnggaran').value, total: document.getElementById('inpTotalAnggaran').value };
-  if(!d.nama || !d.total) return Swal.fire('Error','Pilih Jenis Laporan dan isi Anggaran!','warning');
+  const jenis = document.getElementById('inpJenisAnggaran').value;
+  const lpjKe = document.getElementById('inpLpjKeAnggaran').value;
+  const total = document.getElementById('inpTotalAnggaran').value;
+  
+  if(!jenis || !total) return Swal.fire('Error','Pilih Jenis Laporan dan isi Anggaran!','warning');
+  
+  // Menggabungkan Nama agar tampil otomatis dengan LPJ_ke jika dipilih
+  let namaAkhir = lpjKe ? `${jenis} LPJ_ke-${lpjKe}` : jenis;
+
   document.getElementById('loading').classList.remove('hidden');
   
-  await callGAS('manageAnggaran', { action: 'add', anggaranData: d });
-  bootstrap.Modal.getInstance(document.getElementById('modalAnggaran')).hide(); document.getElementById('inpJenisAnggaran').value = ''; document.getElementById('inpTotalAnggaran').value = '';
+  await callGAS('manageAnggaran', { action: 'add', anggaranData: { nama: namaAkhir, total: total } });
+  
+  bootstrap.Modal.getInstance(document.getElementById('modalAnggaran')).hide(); 
+  document.getElementById('inpJenisAnggaran').value = ''; 
+  document.getElementById('inpLpjKeAnggaran').value = ''; 
+  document.getElementById('inpTotalAnggaran').value = '';
+  
   await loadAnggaranServer(); 
   document.getElementById('loading').classList.add('hidden');
   Swal.fire('Sukses', 'Anggaran Disimpan', 'success');
@@ -499,6 +519,7 @@ function viewReviewerNotes(rowIndex) {
   }
 }
 
+// FORMATTING UNTUK DAFTAR LAPORAN & RIWAYAT (Menampilkan tulisan LPJ_ke-)
 function renderTable(data) {
   const tbody = document.getElementById('tableBody'); const thead = document.getElementById('tableHead'); tbody.innerHTML = '';
   thead.innerHTML = `<tr><th>Tgl</th><th>Jenis</th><th>Status</th><th>Kegiatan</th><th>Tahun Pelajaran</th><th>Semester</th><th>Bulan</th><th>Pembina/Pelatih</th><th>Ekstra</th><th>Jml Latihan</th><th>Aksi</th></tr>`;
@@ -507,13 +528,20 @@ function renderTable(data) {
   data.forEach(r => {
     let cleanRow = {}; for (let key in r) { cleanRow[key.toString().trim().toLowerCase()] = r[key]; }
     let st = r['Status'], badge = st === 'Pending' ? 'bg-warning' : (st === 'Disetujui KA TU' ? 'bg-success' : (st === 'Ditolak' ? 'bg-danger' : 'bg-primary'));
-    let valKegiatan = cleanRow['kegiatan'] || cleanRow['nama kegiatan'] || cleanRow['nama_kegiatan'] || '-';
+    
+    let valKegiatan = cleanRow['kegiatan'] || cleanRow['nama kegiatan'] || cleanRow['nama_kegiatan'] || cleanRow['jenis laporan'] || '-';
     let valTahun    = cleanRow['tahun pelajaran'] || cleanRow['tahun ajaran'] || cleanRow['tahun_pelajaran'] || '-';
     let valSemester = cleanRow['semester'] || '-';
     let valBulan    = cleanRow['bulan laporan'] || cleanRow['bulan'] || '-';
     let valPembina  = cleanRow['nama pembina/pelatih'] || cleanRow['pembina/pelatih'] || cleanRow['nama_pembina'] || cleanRow['nama pelatih'] || '-';
     let valEkstra   = cleanRow['cabang ekstra'] || cleanRow['ekstra'] || cleanRow['ekstrakurikuler'] || cleanRow['cabang_ekstra'] || '-';
     let valLatihan  = cleanRow['banyak latihan'] || cleanRow['jumlah latihan'] || cleanRow['jml latihan'] || cleanRow['banyak_latihan'] || '-';
+    
+    // Menambahkan embel-embel LPJ_ke- di nama kegiatan jika field tersebut diisi pada saat LPJ
+    let lpjKe = r['LPJ_ke'] || cleanRow['lpj_ke'] || cleanRow['lpj ke'] || '';
+    if (r['Jenis_Laporan'] === 'LPJ' && lpjKe !== '') {
+        valKegiatan = valKegiatan === '-' ? `LPJ_ke-${lpjKe}` : `${valKegiatan} LPJ_ke-${lpjKe}`;
+    }
 
     let tr = `<tr><td>${r['Timestamp'] || '-'}</td><td>${r['Jenis_Laporan'] || '-'}</td><td><span class="badge ${badge}">${st}</span></td><td>${valKegiatan}</td><td>${valTahun}</td><td>${valSemester}</td><td>${valBulan}</td><td>${valPembina}</td><td>${valEkstra}</td><td>${valLatihan}</td><td class="text-center">`;
     
@@ -596,7 +624,14 @@ async function loadArchive() {
   const res = await callGAS('getArchiveData'); 
   document.getElementById('loading').classList.add('hidden'); 
   const tbody = document.getElementById('archiveTableBody'); tbody.innerHTML = ''; 
-  res.data.forEach(r => { tbody.innerHTML += `<tr><td>${r.Timestamp}</td><td>${r.Jenis_Laporan}</td><td>${r.Username_Petugas}</td><td>${r.nama_kegiatan||'-'}</td><td class="text-center"><button onclick="openPdfViewer('${r.Link_File_PDF}')" class="btn btn-sm btn-info"><i class="fas fa-file-pdf"></i></button></td></tr>`; }); 
+  res.data.forEach(r => { 
+    let keg = r.nama_kegiatan || r.kegiatan || r['Nama Kegiatan'] || r.Jenis_Laporan || '-';
+    let lpj = r.LPJ_ke || r.lpj_ke || '';
+    if (r.Jenis_Laporan === 'LPJ' && lpj !== '') {
+        keg = keg === '-' ? `LPJ_ke-${lpj}` : `${keg} LPJ_ke-${lpj}`;
+    }
+    tbody.innerHTML += `<tr><td>${r.Timestamp}</td><td>${r.Jenis_Laporan}</td><td>${r.Username_Petugas}</td><td>${keg}</td><td class="text-center"><button onclick="openPdfViewer('${r.Link_File_PDF}')" class="btn btn-sm btn-info"><i class="fas fa-file-pdf"></i></button></td></tr>`; 
+  }); 
 }
 
 function archiveLaporan(idx) { Swal.fire({ title: 'Arsipkan?', showCancelButton: true }).then(async res => { if(res.isConfirmed) { document.getElementById('loading').classList.remove('hidden'); await callGAS('moveToArchive', { rowIndex: idx }); await loadDashboardServer(); document.getElementById('loading').classList.add('hidden'); Swal.fire('Sukses','','success'); } }); }
@@ -607,6 +642,20 @@ async function handleSubmit(e) {
   e.preventDefault();
   const form = document.getElementById('dynamicForm'); const obj = Object.fromEntries(new FormData(form).entries()); const fileIn = form.querySelectorAll('input[type="file"]'); obj.currentUser = currentUser.user; 
   
+  // =======================================================================
+  // INJEKSI NAMA KEGIATAN OTOMATIS AGAR PEMOTONGAN SALDO ANGGARAN PRESISI
+  // =======================================================================
+  if (obj.tipeLaporan === 'LPJ' && obj.LPJ_ke) {
+      let newMatches = {};
+      for (let key in obj) {
+          if (typeof obj[key] === 'string' && obj[key].trim() !== '') {
+              // Jika admin menggunakan "Lomba Atletik LPJ_ke-1", obj ini akan lolos filter backend
+              newMatches[key + '_combined'] = obj[key] + ' LPJ_ke-' + obj.LPJ_ke;
+          }
+      }
+      Object.assign(obj, newMatches); // Gabungkan key ke dalam object pengiriman
+  }
+
   const btn = document.getElementById('btnSubmit'); const btnText = btn.innerText; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Mengirim...'; btn.disabled = true; document.getElementById('loading').classList.remove('hidden');
 
   const processResponse = (res) => {
@@ -631,7 +680,6 @@ async function handleSubmit(e) {
 
 function selectRole(role) { document.getElementById('inputTipeLaporan').value = role; document.getElementById('inputEditRowIndex').value = ""; document.getElementById('formTitle').innerText = "Form Input"; document.getElementById('revisionAlert').classList.add('hidden'); document.getElementById('btnSubmit').innerText = "Kirim Laporan"; renderForm(role); showPage('form'); }
 
-// MERENDER FORM (Penyuntikan Form LPJ ke- dan Total Anggaran)
 function renderForm(role) { 
   const box = document.getElementById('formBuilder'); box.innerHTML = ''; 
   const config = rawConfig.filter(i => (i.category||'umum').toLowerCase() === 'umum' || (i.category||'').toLowerCase() === role.toLowerCase());
@@ -668,12 +716,10 @@ function renderForm(role) {
 
   // --- INJEKSI KHUSUS UNTUK FORM LPJ ---
   if (role.toLowerCase() === 'lpj') {
-    // 1. Dropdown LPJ ke-
     let htmlLpjKe = `<div class="col-md-6 mb-2"><label class="small fw-bold">LPJ ke-</label><select class="form-select" name="LPJ_ke" required><option value="">- Pilih -</option>`;
     for(let j=1; j<=10; j++) { htmlLpjKe += `<option value="${j}">${j}</option>`; }
     htmlLpjKe += `</select></div>`;
     
-    // 2. Input Total Anggaran (yang secara otomatis memotong saldo backend)
     let htmlTotalAnggaran = `<div class="col-md-6 mb-2"><label class="small fw-bold">Total Anggaran (Rp)</label><input type="number" class="form-control" name="Total_Anggaran" placeholder="Hanya angka, cth: 1500000" required></div>`;
     
     box.innerHTML += htmlLpjKe + htmlTotalAnggaran;
