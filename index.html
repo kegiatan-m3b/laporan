@@ -269,11 +269,18 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbyeoRR_IOs3npX0zLbol2wY
 // =========================================================================
 async function callGAS(action, data = {}) {
   try {
-    const response = await fetch(GAS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: action, data: data }) });
+    const response = await fetch(GAS_URL, { 
+      method: 'POST', 
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
+      redirect: 'follow', // Tambahan parameter pengaman
+      body: JSON.stringify({ action: action, data: data }) 
+    });
     return await response.json();
   } catch (error) {
-    Swal.fire('Error Koneksi', 'Gagal menghubungi server database (Google Script).', 'error');
-    document.getElementById('loading').classList.add('hidden'); throw error;
+    console.error("Fetch Error: ", error);
+    Swal.fire('Error Koneksi', 'Gagal menghubungi server database (Google Script). Cek Console F12.', 'error');
+    document.getElementById('loading').classList.add('hidden');
+    throw error;
   }
 }
 
