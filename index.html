@@ -24,6 +24,9 @@
     .category-card { transition: transform 0.2s; cursor: pointer; border: 2px solid transparent; }
     .category-card:hover { transform: translateY(-5px); border-color: #1a237e; }
     .pdf-frame { width: 100%; height: 650px; border: 1px solid #ddd; border-radius: 8px; background: #eee; }
+    .print-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .print-table th, .print-table td { border: 1px solid #333; padding: 8px; vertical-align: top; }
+    .print-table th { background-color: #f0f0f0; text-align: center; }
   </style>
 </head>
 <body>
@@ -89,6 +92,7 @@
 
 <div id="content-wrapper">
   
+  <!-- HALAMAN LOGIN -->
   <div id="page-login">
     <div class="d-flex justify-content-center align-items-center" style="height: 90vh;">
       <div class="glass-card text-center" style="width: 350px;">
@@ -100,6 +104,7 @@
     </div>
   </div>
 
+  <!-- HALAMAN DASHBOARD / DAFTAR LAPORAN -->
   <div id="page-dashboard" class="hidden">
     <div class="glass-card">
       <div class="d-flex justify-content-between align-items-center mb-3">
@@ -114,7 +119,7 @@
     </div>
   </div>
 
-  <!-- MENU BARU: CETAK LAPORAN -->
+  <!-- HALAMAN CETAK LAPORAN -->
   <div id="page-cetak" class="hidden">
     <div class="glass-card">
       <h4 class="mb-3">Cetak Laporan Ekstrakurikuler</h4>
@@ -125,22 +130,14 @@
         <div class="col-md-5">
           <select id="cetakBulan" class="form-select">
              <option value="">- Semua Bulan -</option>
-             <option value="Januari">Januari</option>
-             <option value="Februari">Februari</option>
-             <option value="Maret">Maret</option>
-             <option value="April">April</option>
-             <option value="Mei">Mei</option>
-             <option value="Juni">Juni</option>
-             <option value="Juli">Juli</option>
-             <option value="Agustus">Agustus</option>
-             <option value="September">September</option>
-             <option value="Oktober">Oktober</option>
-             <option value="November">November</option>
-             <option value="Desember">Desember</option>
+             <option value="Januari">Januari</option><option value="Februari">Februari</option><option value="Maret">Maret</option>
+             <option value="April">April</option><option value="Mei">Mei</option><option value="Juni">Juni</option>
+             <option value="Juli">Juli</option><option value="Agustus">Agustus</option><option value="September">September</option>
+             <option value="Oktober">Oktober</option><option value="November">November</option><option value="Desember">Desember</option>
           </select>
         </div>
         <div class="col-md-2">
-           <button onclick="doCetakLaporan()" class="btn btn-success w-100"><i class="fas fa-print me-1"></i> Cetak</button>
+           <button onclick="previewLaporan()" class="btn btn-primary w-100"><i class="fas fa-eye me-1"></i> Preview</button>
         </div>
       </div>
     </div>
@@ -200,23 +197,19 @@
     </div>
   </div>
 
+  <!-- MENU MANAGE USER, ANGGARAN, DSB -->
   <div id="page-manage-user" class="hidden">
     <div class="glass-card">
       <div class="d-flex justify-content-between mb-3"><h4>Kelola User</h4><button onclick="openModalUser()" class="btn btn-success btn-sm"><i class="fas fa-plus"></i> Tambah User</button></div>
       <div class="table-responsive"><table class="table table-bordered table-striped small"><thead class="table-dark"><tr><th>Username</th><th>Nama</th><th>Role</th><th>Email</th><th>Aksi</th></tr></thead><tbody id="userTableBody"></tbody></table></div>
     </div>
   </div>
-
   <div id="page-manage-anggaran" class="hidden">
     <div class="glass-card">
-      <div class="d-flex justify-content-between mb-3">
-        <h4>Kelola Anggaran Kegiatan</h4>
-        <button onclick="openModalAnggaran()" class="btn btn-success btn-sm"><i class="fas fa-plus"></i> Tambah Anggaran</button>
-      </div>
+      <div class="d-flex justify-content-between mb-3"><h4>Kelola Anggaran Kegiatan</h4><button onclick="openModalAnggaran()" class="btn btn-success btn-sm"><i class="fas fa-plus"></i> Tambah Anggaran</button></div>
       <div class="table-responsive"><table class="table table-bordered table-striped small"><thead class="table-dark"><tr><th>Jenis Laporan / Kegiatan</th><th>Total Anggaran</th><th>Terpakai</th><th>Sisa</th><th>Aksi</th></tr></thead><tbody id="anggaranTableBody"></tbody></table></div>
     </div>
   </div>
-
   <div id="page-info-anggaran" class="hidden">
     <div class="glass-card">
       <h4 class="mb-3">Informasi Sisa Anggaran</h4>
@@ -256,16 +249,36 @@
       </div>
     </div>
   </div>
-
 </div>
 
-<!-- MODAL USER & ANGGARAN TETAP SAMA SEPERTI SEBELUMNYA -->
+<!-- MODAL USER & ANGGARAN -->
 <div class="modal fade" id="modalUser" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Tambah User</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="text" id="inpUser" class="form-control mb-2" placeholder="Username"><input type="password" id="inpPass" class="form-control mb-2" placeholder="Password"><input type="text" id="inpNama" class="form-control mb-2" placeholder="Nama Lengkap"><input type="email" id="inpEmail" class="form-control mb-2" placeholder="Email"><select id="inpRole" class="form-select mb-2"><option value="Petugas">Petugas</option><option value="Pimpinan">Pimpinan</option><option value="Kepala">Kepala</option><option value="Komite">Komite</option><option value="Admin">Admin</option></select><button onclick="saveUser()" class="btn btn-primary w-100">Simpan</button></div></div></div></div>
 <div class="modal fade" id="modalAnggaran" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Atur Total Anggaran</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><label class="small text-muted">Jenis Laporan / Kegiatan</label><select id="inpJenisAnggaran" class="form-select mb-2"><option value="">- Pilih Jenis Laporan -</option></select><label class="small text-muted">Anggaran Khusus LPJ ke- (Opsional)</label><select id="inpLpjKeAnggaran" class="form-select mb-2"><option value="">- Semua / Berlaku Umum -</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select><label class="small text-muted">Total Anggaran (Angka saja)</label><input type="number" id="inpTotalAnggaran" class="form-control mb-3" placeholder="Misal: 10000000"><button onclick="saveAnggaran()" class="btn btn-primary w-100">Simpan Anggaran</button></div></div></div></div>
 
+<!-- MODAL PREVIEW CETAK -->
+<div class="modal fade" id="modalPreviewCetak" tabindex="-1">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title"><i class="fas fa-file-alt me-2"></i> Preview Cetak Laporan</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body bg-light" style="max-height: 70vh; overflow-y: auto;">
+         <div id="previewContent" class="bg-white p-4 border" style="box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+            <!-- ISI LAPORAN AKAN MUNCUL DI SINI -->
+         </div>
+      </div>
+      <div class="modal-footer justify-content-center">
+         <button onclick="printToPDF()" class="btn btn-danger px-4"><i class="fas fa-file-pdf me-2"></i> Cetak / Simpan PDF</button>
+         <button onclick="exportToWord()" class="btn btn-primary px-4"><i class="fas fa-file-word me-2"></i> Download Word</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 // =========================================================================
-// MASUKKAN URL WEB APP GOOGLE APPS SCRIPT HASIL NEW DEPLOYMENT
+// MASUKKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI BAWAH INI
 // =========================================================================
 const GAS_URL = "https://script.google.com/macros/s/AKfycbxmGfjY20IPIY516EUQ7ij57FtWwwmWJ5SVX0kxdeHZyb7jAY7ZVu7Z7Tqzpr1kWc7B2Q/exec"; 
 
@@ -273,20 +286,14 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbxmGfjY20IPIY516EUQ7ij5
 async function callGAS(action, data = {}) {
   try {
     const response = await fetch(GAS_URL, { 
-      method: 'POST', 
-      redirect: 'follow', // Pastikan mengikuti redirect dari Google Server
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
+      method: 'POST', redirect: 'follow', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
       body: JSON.stringify({ action: action, data: data }) 
     });
     if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
     return await response.json();
   } catch (error) {
     document.getElementById('loading').classList.add('hidden');
-    Swal.fire({
-      title: 'Koneksi Terputus!',
-      text: 'Gagal terhubung ke Database. Pastikan link URL sudah diubah dan Google Script di-deploy dengan akses "Anyone" (Siapa saja).',
-      icon: 'error'
-    });
+    Swal.fire({ title: 'Koneksi Terputus!', text: 'Gagal terhubung ke Database. Pastikan link URL sudah diubah dan Google Script di-deploy dengan akses "Anyone".', icon: 'error' });
     throw error;
   }
 }
@@ -312,9 +319,6 @@ async function doLogin() {
       currentUser = res; document.body.classList.add('logged-in'); document.getElementById('sidebar').style.display = 'flex'; document.getElementById('page-login').classList.add('hidden');
       resetMenus();
       
-      // ==========================================================
-      // LOGIKA PERCEPATAN LOGIN (Menarik SEMUA data dalam 1 fungsi)
-      // ==========================================================
       const initData = await callGAS('initData');
       rawConfig = initData.config || [];
       globalGuru = initData.guru || [];
@@ -356,9 +360,17 @@ function showPage(id) {
   else if(id === 'dashboard') { currentPageMode = 'all'; document.getElementById('dashTitle').innerText = "Daftar Laporan"; }
   else if(id === 'profile') { document.getElementById('profNama').value = currentUser.nama; document.getElementById('profRole').value = currentUser.role; }
   else if (id === 'cetak') {
+      // Mengisi filter dropdown Cabang Ekstra dari data riwayat secara dinamis agar 100% presisi
+      let uniqueCabang = new Set();
+      globalData.forEach(r => {
+          if((r.Jenis_Laporan || '').toLowerCase() === 'ekstrakurikuler') {
+              let clean = {}; for(let k in r) clean[k.toLowerCase().trim()] = r[k];
+              let c = clean['cabang ekstra'] || clean['ekstra'] || clean['nama kegiatan'] || clean['kegiatan'] || clean['jenis laporan'];
+              if(c) uniqueCabang.add(c.trim());
+          }
+      });
       const sel = document.getElementById('cetakCabang'); sel.innerHTML = '<option value="">- Semua Cabang Ekstra -</option>';
-      const cfg = rawConfig.find(x => x.label.toLowerCase() === 'cabang ekstra' || x.label.toLowerCase() === 'jenis laporan');
-      if (cfg && cfg.options) cfg.options.forEach(o => { if(o.trim()) sel.innerHTML += `<option value="${o.trim()}">${o.trim()}</option>`; });
+      uniqueCabang.forEach(c => { sel.innerHTML += `<option value="${c}">${c}</option>`; });
   }
 
   document.querySelectorAll('[id^="page"]').forEach(d => d.classList.add('hidden'));
@@ -371,73 +383,85 @@ function showPage(id) {
 }
 
 // =========================================================================
-// LOGIKA MENU CETAK LAPORAN (PDF / WORD)
+// LOGIKA CETAK (PDF & WORD) DAN PREVIEW POP-UP
 // =========================================================================
-function doCetakLaporan() {
+function previewLaporan() {
   const fCabang = document.getElementById('cetakCabang').value.toLowerCase();
   const fBulan = document.getElementById('cetakBulan').value.toLowerCase();
   
+  // Perbaikan Filter Anti "Data Kosong"
   let filteredData = globalData.filter(r => {
-     if (r.Jenis_Laporan !== 'Ekstrakurikuler') return false;
+     let jenis = (r.Jenis_Laporan || '').trim().toLowerCase();
+     if (jenis !== 'ekstrakurikuler') return false;
+     
      let clean = {}; for(let k in r) clean[k.toLowerCase().trim()] = r[k];
-     let cCabang = (clean['cabang ekstra'] || clean['ekstra'] || '').toLowerCase();
+     let cCabang = (clean['cabang ekstra'] || clean['ekstra'] || clean['nama kegiatan'] || clean['kegiatan'] || clean['jenis laporan'] || '').toLowerCase();
      let cBulan = (clean['bulan laporan'] || clean['bulan'] || '').toLowerCase();
      
-     if (fCabang && cCabang !== fCabang) return false;
+     if (fCabang && !cCabang.includes(fCabang)) return false;
      if (fBulan && cBulan !== fBulan) return false;
      return true;
   });
   
-  if(filteredData.length === 0) return Swal.fire('Data Kosong','Tidak ada laporan ekstrakurikuler yang sesuai dengan filter.','info');
+  if(filteredData.length === 0) return Swal.fire('Data Kosong','Tidak ada data Ekstrakurikuler yang sesuai dengan filter yang dipilih.','info');
   
-  // Format Template yang akan diprint/save ke PDF browser
-  let html = `<html><head><title>Cetak Laporan Ekstrakurikuler</title><style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    h2 { text-align: center; text-transform: uppercase; margin-bottom: 20px;}
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th, td { border: 1px solid #333; padding: 8px; text-align: left; vertical-align: top; }
-    th { background: #f0f0f0; text-align: center; }
-    a { color: #1a0dab; text-decoration: none; }
-  </style></head><body>`;
-  
-  html += `<h2>Laporan Pelaksanaan Ekstrakurikuler</h2>`;
-  html += `<table><thead><tr><th>Tgl Submit</th><th>Cabang</th><th>Bulan</th><th>Data Pembina & Jml Latihan</th><th>Data Pelatih & Jml Latihan</th><th>Link PDF Laporan</th></tr></thead><tbody>`;
+  let html = `<h3 style="text-align:center; font-family:Arial, sans-serif; text-transform:uppercase; margin-bottom:20px;">Laporan Pelaksanaan Ekstrakurikuler</h3>`;
+  html += `<table class="print-table" border="1" cellpadding="5" cellspacing="0" style="width:100%; border-collapse:collapse; font-size:12px; font-family:Arial, sans-serif;">`;
+  html += `<tr style="background:#f0f0f0;"><th>Tgl Submit</th><th>Cabang</th><th>Bulan</th><th>Data Pembina & Latihan</th><th>Data Pelatih & Latihan</th><th>Bukti (Link)</th></tr>`;
   
   filteredData.forEach(r => {
      let clean = {}; for(let k in r) clean[k.toLowerCase().trim()] = r[k];
      let tgl = r.Timestamp || '-';
-     let cab = clean['cabang ekstra'] || clean['ekstra'] || '-';
+     let cab = clean['cabang ekstra'] || clean['ekstra'] || clean['nama kegiatan'] || clean['jenis laporan'] || '-';
      let bul = clean['bulan laporan'] || clean['bulan'] || '-';
      let linkPdf = r.Link_File_PDF || '#';
      
-     let strPembina = "";
-     let strPelatih = "";
-     
+     let strPembina = "", strPelatih = "";
      for(let i=1; i<=10; i++) {
-        let pName = r[`Nama_Pembina_${i}`] || clean[`nama_pembina_${i}`] || clean[`nama pembina ${i}`];
-        let pLat = r[`Banyak_Latihan_Pembina_${i}`] || clean[`banyak_latihan_pembina_${i}`] || clean[`banyak latihan pembina ${i}`];
+        let pName = r[`Nama_Pembina_${i}`] || clean[`nama_pembina_${i}`];
+        let pLat = r[`Banyak_Latihan_Pembina_${i}`] || clean[`banyak_latihan_pembina_${i}`];
         if(pName && pName !== '-' && pName !== '') strPembina += `<li><b>${pName}</b> (${pLat}x Latihan)</li>`;
         
-        let plName = r[`Nama_Pelatih_${i}`] || clean[`nama_pelatih_${i}`] || clean[`nama pelatih ${i}`];
-        let plLat = r[`Banyak_Latihan_Pelatih_${i}`] || clean[`banyak_latihan_pelatih_${i}`] || clean[`banyak latihan pelatih ${i}`];
+        let plName = r[`Nama_Pelatih_${i}`] || clean[`nama_pelatih_${i}`];
+        let plLat = r[`Banyak_Latihan_Pelatih_${i}`] || clean[`banyak_latihan_pelatih_${i}`];
         if(plName && plName !== '-' && plName !== '') strPelatih += `<li><b>${plName}</b> (${plLat}x Latihan)</li>`;
      }
      
      strPembina = strPembina ? `<ul style="margin:0; padding-left:15px;">${strPembina}</ul>` : '-';
      strPelatih = strPelatih ? `<ul style="margin:0; padding-left:15px;">${strPelatih}</ul>` : '-';
-     let linkTampil = linkPdf !== '#' ? `<a href="${linkPdf}" target="_blank">Lihat Bukti PDF</a>` : '-';
+     let linkTampil = linkPdf !== '#' ? `<a href="${linkPdf}" target="_blank" style="color:blue; text-decoration:underline;">Buka PDF</a>` : '-';
 
      html += `<tr><td style="white-space:nowrap;">${tgl}</td><td>${cab}</td><td>${bul}</td><td>${strPembina}</td><td>${strPelatih}</td><td style="text-align:center;">${linkTampil}</td></tr>`;
   });
+  html += `</table>`;
   
-  html += `</tbody></table></body></html>`;
-  
-  // Buka jendela baru lalu eksekusi Print (Bisa save jadi PDF atau print kertas di Browser Chrome/Edge/dll)
-  let printWin = window.open('', '', 'width=900,height=700');
-  printWin.document.write(html);
-  printWin.document.close();
-  printWin.focus();
-  setTimeout(() => { printWin.print(); }, 800);
+  document.getElementById('previewContent').innerHTML = html;
+  new bootstrap.Modal(document.getElementById('modalPreviewCetak')).show();
+}
+
+function printToPDF() {
+    let content = document.getElementById('previewContent').innerHTML;
+    let printWin = window.open('', '', 'width=1000,height=800');
+    printWin.document.write('<html><head><title>Cetak PDF Laporan</title></head><body>' + content + '</body></html>');
+    printWin.document.close();
+    printWin.focus();
+    setTimeout(() => { printWin.print(); printWin.close(); }, 500);
+}
+
+function exportToWord() {
+    let preHtml = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export Word</title></head><body>";
+    let postHtml = "</body></html>";
+    let content = document.getElementById('previewContent').innerHTML;
+    let html = preHtml + content + postHtml;
+    
+    let blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+    let url = URL.createObjectURL(blob);
+    let a = document.createElement('a');
+    a.href = url;
+    a.download = 'Laporan_Ekstrakurikuler.doc';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 }
 
 // =========================================================================
@@ -624,9 +648,6 @@ async function handleSubmit(e) {
       for (let key in obj) { if (typeof obj[key] === 'string' && obj[key].trim() !== '') newMatches[key + '_combined'] = obj[key] + ' LPJ_ke-' + obj.LPJ_ke; } Object.assign(obj, newMatches);
   }
 
-  // =======================================================================
-  // LOGIKA PENGISIAN OTOMATIS TANDA HUBUNG (-) JIKA FORM 2-10 DIKOSONGKAN
-  // =======================================================================
   if (obj.tipeLaporan === 'Ekstrakurikuler') {
       for(let i=1; i<=10; i++) {
           if(!obj[`Nama_Pembina_${i}`]) obj[`Nama_Pembina_${i}`] = "-";
@@ -677,10 +698,12 @@ function renderForm(role) {
   if (role.toLowerCase() === 'ekstrakurikuler') {
      let htmlEkstra = '<div class="col-12 mt-3 mb-2"><h6 class="fw-bold border-bottom pb-2 text-primary">Data Pembina & Pelatih (Bisa lebih dari 1)</h6><small class="text-muted">Biarkan kosong jika tidak ada.</small></div>';
      for(let i=1; i<=10; i++) {
-         htmlEkstra += `<div class="col-md-8 mb-2"><label class="small text-muted">Nama Pembina ${i}</label><select class="form-select select-pembina" name="Nama_Pembina_${i}"><option value="">- Pilih Pembina -</option></select></div><div class="col-md-4 mb-2"><label class="small text-muted">Banyak Latihan Pembina</label><input type="number" class="form-control" name="Banyak_Latihan_Pembina_${i}" placeholder="0"></div>`;
+         let isReq = i === 1 ? 'required' : '';
+         htmlEkstra += `<div class="col-md-8 mb-2"><label class="small text-muted">Nama Pembina ${i}</label><select class="form-select select-pembina" name="Nama_Pembina_${i}" ${isReq}><option value="">- Pilih Pembina -</option></select></div><div class="col-md-4 mb-2"><label class="small text-muted">Banyak Latihan Pembina</label><input type="number" class="form-control" name="Banyak_Latihan_Pembina_${i}" placeholder="0" ${isReq}></div>`;
      }
      for(let i=1; i<=10; i++) {
-         htmlEkstra += `<div class="col-md-8 mb-2"><label class="small text-muted">Nama Pelatih ${i}</label><select class="form-select select-pelatih" name="Nama_Pelatih_${i}"><option value="">- Pilih Pelatih -</option></select></div><div class="col-md-4 mb-2"><label class="small text-muted">Banyak Latihan Pelatih</label><input type="number" class="form-control" name="Banyak_Latihan_Pelatih_${i}" placeholder="0"></div>`;
+         let isReq = i === 1 ? 'required' : '';
+         htmlEkstra += `<div class="col-md-8 mb-2"><label class="small text-muted">Nama Pelatih ${i}</label><select class="form-select select-pelatih" name="Nama_Pelatih_${i}" ${isReq}><option value="">- Pilih Pelatih -</option></select></div><div class="col-md-4 mb-2"><label class="small text-muted">Banyak Latihan Pelatih</label><input type="number" class="form-control" name="Banyak_Latihan_Pelatih_${i}" placeholder="0" ${isReq}></div>`;
      }
      box.innerHTML += htmlEkstra;
   }
@@ -702,7 +725,7 @@ window.onload = async () => {
   const fallbackTimer = setTimeout(() => {
      if(!document.getElementById('loading').classList.contains('hidden')) {
          document.getElementById('loading').classList.add('hidden');
-         Swal.fire({ title: 'Koneksi Lambat/Diblokir', text: 'Pastikan Link GAS URL sudah benar. Jika Anda menggunakan AdBlocker/Brave Browser, coba matikan fitur "Shield" sementara.', icon: 'warning' });
+         Swal.fire({ title: 'Koneksi Lambat/Diblokir', text: 'Pastikan Link GAS URL sudah benar. Jika Anda menggunakan AdBlocker, coba matikan fitur perlindungan iklan sementara.', icon: 'warning' });
      }
   }, 10000); 
 
