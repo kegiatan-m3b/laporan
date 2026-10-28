@@ -89,9 +89,7 @@
     <div class="d-flex justify-content-center align-items-center" style="height: 90vh;">
       <div class="glass-card text-center" style="width: 350px;">
         <h4 class="mb-4">LOGIN</h4>
-        <select id="userIn" class="form-select mb-2">
-           <option value="">Memuat Username...</option>
-        </select>
+        <select id="userIn" class="form-select mb-2"><option value="">Memuat Username...</option></select>
         <input type="password" id="passIn" class="form-control mb-3" placeholder="Password">
         <button id="btnLogin" onclick="doLogin()" class="btn btn-primary w-100">MASUK</button>
       </div>
@@ -106,15 +104,7 @@
       </div>
       <div class="row g-2 mb-3">
         <div class="col-md-4"><select id="filterJenis" class="form-select form-select-sm" onchange="applyFilter()"><option value="">Semua Jenis</option><option value="Ekstrakurikuler">Ekstrakurikuler</option><option value="Proposal">Proposal</option><option value="LPJ">LPJ</option></select></div>
-        <div class="col-md-4">
-          <select id="filterStatus" class="form-select form-select-sm" onchange="applyFilter()">
-            <option value="">Semua Status</option>
-            <option value="Pending">Pending</option>
-            <option value="Disetujui KA TU">Disetujui KA TU</option>
-            <option value="Revisi">Revisi</option>
-            <option value="Ditolak">Ditolak</option>
-          </select>
-        </div>
+        <div class="col-md-4"><select id="filterStatus" class="form-select form-select-sm" onchange="applyFilter()"><option value="">Semua Status</option><option value="Pending">Pending</option><option value="Disetujui KA TU">Disetujui KA TU</option><option value="Revisi">Revisi</option><option value="Ditolak">Ditolak</option></select></div>
       </div>
       <div class="table-responsive"><table class="table table-bordered table-hover small"><thead class="table-light text-center" id="tableHead"></thead><tbody id="tableBody"></tbody></table></div>
     </div>
@@ -177,12 +167,7 @@
   <div id="page-manage-user" class="hidden">
     <div class="glass-card">
       <div class="d-flex justify-content-between mb-3"><h4>Kelola User</h4><button onclick="openModalUser()" class="btn btn-success btn-sm"><i class="fas fa-plus"></i> Tambah User</button></div>
-      <div class="table-responsive">
-        <table class="table table-bordered table-striped small">
-          <thead class="table-dark"><tr><th>Username</th><th>Nama</th><th>Role</th><th>Email</th><th>Aksi</th></tr></thead>
-          <tbody id="userTableBody"></tbody>
-        </table>
-      </div>
+      <div class="table-responsive"><table class="table table-bordered table-striped small"><thead class="table-dark"><tr><th>Username</th><th>Nama</th><th>Role</th><th>Email</th><th>Aksi</th></tr></thead><tbody id="userTableBody"></tbody></table></div>
     </div>
   </div>
 
@@ -193,12 +178,7 @@
         <h4>Kelola Anggaran Kegiatan</h4>
         <button onclick="openModalAnggaran()" class="btn btn-success btn-sm"><i class="fas fa-plus"></i> Tambah Anggaran</button>
       </div>
-      <div class="table-responsive">
-        <table class="table table-bordered table-striped small">
-          <thead class="table-dark"><tr><th>Jenis Laporan / Kegiatan</th><th>Total Anggaran</th><th>Terpakai</th><th>Sisa</th><th>Aksi</th></tr></thead>
-          <tbody id="anggaranTableBody"></tbody>
-        </table>
-      </div>
+      <div class="table-responsive"><table class="table table-bordered table-striped small"><thead class="table-dark"><tr><th>Jenis Laporan / Kegiatan</th><th>Total Anggaran</th><th>Terpakai</th><th>Sisa</th><th>Aksi</th></tr></thead><tbody id="anggaranTableBody"></tbody></table></div>
     </div>
   </div>
 
@@ -206,12 +186,7 @@
   <div id="page-info-anggaran" class="hidden">
     <div class="glass-card">
       <h4 class="mb-3">Informasi Sisa Anggaran</h4>
-      <div class="table-responsive">
-        <table class="table table-bordered table-striped small">
-          <thead class="table-primary text-center"><tr><th>Jenis Laporan / Kegiatan</th><th>Total Anggaran</th><th>Terpakai</th><th>Sisa Anggaran</th></tr></thead>
-          <tbody id="infoAnggaranTableBody"></tbody>
-        </table>
-      </div>
+      <div class="table-responsive"><table class="table table-bordered table-striped small"><thead class="table-primary text-center"><tr><th>Jenis Laporan / Kegiatan</th><th>Total Anggaran</th><th>Terpakai</th><th>Sisa Anggaran</th></tr></thead><tbody id="infoAnggaranTableBody"></tbody></table></div>
     </div>
   </div>
 
@@ -274,20 +249,9 @@
       <div class="modal-header"><h5 class="modal-title">Atur Total Anggaran</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
       <div class="modal-body">
         <label class="small text-muted">Jenis Laporan / Kegiatan</label>
-        <select id="inpJenisAnggaran" class="form-select mb-2">
-            <option value="">- Pilih Jenis Laporan -</option>
-        </select>
-        
+        <select id="inpJenisAnggaran" class="form-select mb-2"><option value="">- Pilih Jenis Laporan -</option></select>
         <label class="small text-muted">Anggaran Khusus LPJ ke- (Opsional)</label>
-        <select id="inpLpjKeAnggaran" class="form-select mb-2">
-            <option value="">- Semua / Berlaku Umum -</option>
-            <option value="1">1</option><option value="2">2</option>
-            <option value="3">3</option><option value="4">4</option>
-            <option value="5">5</option><option value="6">6</option>
-            <option value="7">7</option><option value="8">8</option>
-            <option value="9">9</option><option value="10">10</option>
-        </select>
-
+        <select id="inpLpjKeAnggaran" class="form-select mb-2"><option value="">- Semua / Berlaku Umum -</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select>
         <label class="small text-muted">Total Anggaran (Angka saja)</label>
         <input type="number" id="inpTotalAnggaran" class="form-control mb-3" placeholder="Misal: 10000000">
         <button onclick="saveAnggaran()" class="btn btn-primary w-100">Simpan Anggaran</button>
@@ -300,32 +264,21 @@
 // =========================================================================
 // 1. MASUKKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI SINI
 // =========================================================================
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwMxaS9D7ubAVkDJIwQ6YKIFJZYbuDlSeTJ5pS5beP23g1BHxH9GtxwXe9zV0YKxwk9Zg/exec"; 
+const GAS_URL = "https://script.google.com/macros/s/AKfycbyUahiieUCLwbUMXSL0KsMl-wgCtraOd83CXHQf5JQXqfDSQRMp6fbD5P_cvUjgDo1R0g/exec"; 
 
-// =========================================================================
-// 2. FUNGSI FETCH (PENGGANTI google.script.run)
 // =========================================================================
 async function callGAS(action, data = {}) {
   try {
-    const response = await fetch(GAS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: action, data: data })
-    });
+    const response = await fetch(GAS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: action, data: data }) });
     return await response.json();
   } catch (error) {
-    console.error("Fetch Error: ", error);
     Swal.fire('Error Koneksi', 'Gagal menghubungi server database (Google Script).', 'error');
-    document.getElementById('loading').classList.add('hidden');
-    throw error;
+    document.getElementById('loading').classList.add('hidden'); throw error;
   }
 }
 
-// =========================================================================
-// LOGIKA APLIKASI
-// =========================================================================
 let currentUser = {}, rawConfig = [], globalData = [], globalHeaders = [];
-let globalAnggaran = []; 
+let globalAnggaran = [], globalGuru = []; 
 let currentPageMode = 'all';
 
 function resetMenus() { document.querySelectorAll('.role-menu').forEach(el => el.classList.add('hidden')); }
@@ -335,51 +288,40 @@ function toastMsg(msg, icon='success') { Swal.fire({ toast: true, position: 'top
 async function doLogin() {
   const u = document.getElementById('userIn').value, p = document.getElementById('passIn').value;
   if(!u || !p) return Swal.fire('Error','Pilih Username dan Isi Password!','warning');
-  
-  const btn = document.getElementById('btnLogin');
-  btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Loading...';
-  btn.disabled = true;
+  const btn = document.getElementById('btnLogin'); btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Loading...'; btn.disabled = true;
 
   try {
     const res = await callGAS('loginUser', { username: u, password: p });
-    
     if(res.status === 'success') {
       currentUser = res; document.body.classList.add('logged-in'); document.getElementById('sidebar').style.display = 'flex'; document.getElementById('page-login').classList.add('hidden');
       resetMenus();
       
-      // Ambil Konfigurasi dan Semua Data Riwayat terlebih dahulu
+      // Load Database Utama Saat Login Berhasil
       rawConfig = await callGAS('getFormConfig');
+      globalGuru = await callGAS('getMappingGuru');
       await loadDashboardServer(true);
-      await loadAnggaranServer(); // Proses tabel anggaran dinamis
+      await loadAnggaranServer(); 
       
       btn.innerHTML = 'MASUK'; btn.disabled = false;
       
       if(res.role === 'Admin') { document.getElementById('menu-admin').classList.remove('hidden'); showPage('manage-user'); } 
       else { 
         document.getElementById('menu-'+res.role.toLowerCase()).classList.remove('hidden'); 
-        if(res.role === 'Petugas') { showPage('select-role'); }
-        else { showPage('dashboard'); }
+        if(res.role === 'Petugas') showPage('select-role'); else showPage('dashboard');
       }
-    } else { 
-      btn.innerHTML = 'MASUK'; btn.disabled = false;
-      Swal.fire('Gagal', res.message, 'error'); 
-    }
-  } catch(e) {
-    btn.innerHTML = 'MASUK'; btn.disabled = false;
-  }
+    } else { btn.innerHTML = 'MASUK'; btn.disabled = false; Swal.fire('Gagal', res.message, 'error'); }
+  } catch(e) { btn.innerHTML = 'MASUK'; btn.disabled = false; }
 }
 
 function quickLogout() {
-  currentUser={}; currentPageMode='all'; document.body.classList.remove('logged-in');
-  document.getElementById('sidebar').style.display = 'none';
-  document.querySelectorAll('[id^="page-"]').forEach(p => p.classList.add('hidden')); document.getElementById('page-login').classList.remove('hidden');
+  currentUser={}; currentPageMode='all'; document.body.classList.remove('logged-in'); document.getElementById('sidebar').style.display = 'none';
+  document.querySelectorAll('[id^="page"]').forEach(p => p.classList.add('hidden')); document.getElementById('page-login').classList.remove('hidden');
   document.getElementById('userIn').value = ''; document.getElementById('passIn').value = ''; resetMenus();
 }
 
 function showPage(id) {
   document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-  const activeLink = document.querySelector(`.nav-link[data-id="${id}"]`);
-  if(activeLink) activeLink.classList.add('active');
+  const activeLink = document.querySelector(`.nav-link[data-id="${id}"]`); if(activeLink) activeLink.classList.add('active');
 
   if(id === 'approved') { currentPageMode = 'approved'; id = 'dashboard'; document.getElementById('dashTitle').innerText = "Disetujui KA TU"; } 
   else if(id === 'approved-kepala') { currentPageMode = 'approved-kepala'; id = 'dashboard'; document.getElementById('dashTitle').innerText = "Review Kepala"; }
@@ -387,22 +329,18 @@ function showPage(id) {
   else if(id === 'dashboard') { currentPageMode = 'all'; document.getElementById('dashTitle').innerText = "Daftar Laporan"; }
   else if(id === 'profile') { document.getElementById('profNama').value = currentUser.nama; document.getElementById('profRole').value = currentUser.role; }
 
-  document.querySelectorAll('[id^="page-"]').forEach(d => d.classList.add('hidden'));
+  document.querySelectorAll('[id^="page"]').forEach(d => d.classList.add('hidden'));
   const target = document.getElementById('page-'+id); if(target) target.classList.remove('hidden');
   
   if(id === 'dashboard') applyFilter(); 
   if(id === 'arsip') loadArchive();
   if(id === 'manage-user') loadManageUsers();
-  
-  if(id === 'manage-anggaran' || id === 'info-anggaran') {
-      loadDashboardServer(true).then(() => loadAnggaranServer());
-  }
+  if(id === 'manage-anggaran' || id === 'info-anggaran') { loadDashboardServer(true).then(() => loadAnggaranServer()); }
 }
 
 async function saveNewPassword() {
   const p1 = document.getElementById('profNewPass').value, p2 = document.getElementById('profConfPass').value;
-  if(!p1) return Swal.fire('Oops', 'Password tidak boleh kosong', 'warning');
-  if(p1 !== p2) return Swal.fire('Oops', 'Konfirmasi password tidak sama', 'warning');
+  if(!p1) return Swal.fire('Oops', 'Password tidak boleh kosong', 'warning'); if(p1 !== p2) return Swal.fire('Oops', 'Konfirmasi password tidak sama', 'warning');
   const btn = document.getElementById('btnSavePass'); btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Menyimpan...'; btn.disabled = true;
   
   const res = await callGAS('updatePassword', { username: currentUser.user, newPass: p1 });
@@ -412,131 +350,87 @@ async function saveNewPassword() {
 }
 
 async function loadAnggaranServer() {
-  const res = await callGAS('manageAnggaran', { action: 'get' });
-  globalAnggaran = res;
-  renderAnggaranTables();
+  const res = await callGAS('manageAnggaran', { action: 'get' }); globalAnggaran = res; renderAnggaranTables();
 }
 
-// FUNGSI PEMECAHAN OTOMATIS BERDASARKAN LPJ_KE-
 function renderAnggaranTables() {
   const tbManage = document.getElementById('anggaranTableBody'), tbInfo = document.getElementById('infoAnggaranTableBody');
   if(tbManage) tbManage.innerHTML = ''; if(tbInfo) tbInfo.innerHTML = '';
   
   globalAnggaran.forEach(a => {
-    let isSpecificLPJ = a.nama.includes('LPJ_ke-');
-    let dynamicTerpakai = 0;
-    let subLpjs = [];
+    let isSpecificLPJ = a.nama.includes('LPJ_ke-'); let dynamicTerpakai = 0; let subLpjs = [];
     
-    // Tarik data riwayat LPJ untuk membentuk breakdown tabel dinamis
     if (!isSpecificLPJ && globalData && globalData.length > 0) {
         subLpjs = globalData.filter(r => {
             let cleanRow = {}; for(let k in r) cleanRow[k.toLowerCase().trim()] = r[k];
             let keg = (cleanRow['kegiatan'] || cleanRow['nama kegiatan'] || cleanRow['nama_kegiatan'] || '').toString().trim();
-            let isLpj = r['Jenis_Laporan'] === 'LPJ';
-            let lpjKe = cleanRow['lpj_ke'] || cleanRow['lpj ke'] || '';
+            let isLpj = r['Jenis_Laporan'] === 'LPJ'; let lpjKe = cleanRow['lpj_ke'] || cleanRow['lpj ke'] || '';
             return isLpj && keg === a.nama && lpjKe !== '';
         });
-        
         subLpjs.forEach(sub => {
             let nominalSub = 0;
             for(let key in sub) {
                 if (key.toLowerCase().includes('anggaran') || key.toLowerCase().includes('biaya') || key.toLowerCase().includes('nominal') || key.toLowerCase().includes('total')) {
-                    let val = parseInt(sub[key].toString().replace(/[^0-9]/g, ''), 10);
-                    if (!isNaN(val) && val > 0) nominalSub = val;
+                    let val = parseInt(sub[key].toString().replace(/[^0-9]/g, ''), 10); if (!isNaN(val) && val > 0) nominalSub = val;
                 }
             }
-            sub.nominalUsed = nominalSub; // Menyimpan nominal asli yg diketik user
-            dynamicTerpakai += nominalSub;
+            sub.nominalUsed = nominalSub; dynamicTerpakai += nominalSub;
         });
     }
 
-    // Kalkulasi
     let finalTerpakai = (dynamicTerpakai > 0 || subLpjs.length > 0) ? dynamicTerpakai : parseFloat(a.terpakai || 0);
     let finalSisa = parseFloat(a.total || 0) - finalTerpakai;
-
-    let fmtTotal = 'Rp ' + Number(a.total).toLocaleString('id-ID');
-    let fmtPakai = 'Rp ' + Number(finalTerpakai).toLocaleString('id-ID');
-    let fmtSisa = 'Rp ' + Number(finalSisa).toLocaleString('id-ID');
+    let fmtTotal = 'Rp ' + Number(a.total).toLocaleString('id-ID'), fmtPakai = 'Rp ' + Number(finalTerpakai).toLocaleString('id-ID'), fmtSisa = 'Rp ' + Number(finalSisa).toLocaleString('id-ID');
     let bgSisa = finalSisa < 0 ? 'bg-danger' : (finalSisa == 0 ? 'bg-warning' : 'bg-success');
     
-    // Tampilkan Pagu Utama
-    if(tbManage) { tbManage.innerHTML += `<tr><td class="fw-bold">${a.nama}</td><td>${fmtTotal}</td><td>${fmtPakai}</td><td>${fmtSisa}</td><td><button onclick="delAnggaran('${a.nama}')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></td></tr>`; }
-    if(tbInfo) { tbInfo.innerHTML += `<tr><td class="text-start ps-3 fw-bold">${a.nama}</td><td class="text-end">${fmtTotal}</td><td class="text-end">${fmtPakai}</td><td class="text-center"><span class="badge ${bgSisa} w-75 p-2">${fmtSisa}</span></td></tr>`; }
+    if(tbManage) tbManage.innerHTML += `<tr><td class="fw-bold">${a.nama}</td><td>${fmtTotal}</td><td>${fmtPakai}</td><td>${fmtSisa}</td><td><button onclick="delAnggaran('${a.nama}')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></td></tr>`;
+    if(tbInfo) tbInfo.innerHTML += `<tr><td class="text-start ps-3 fw-bold">${a.nama}</td><td class="text-end">${fmtTotal}</td><td class="text-end">${fmtPakai}</td><td class="text-center"><span class="badge ${bgSisa} w-75 p-2">${fmtSisa}</span></td></tr>`;
     
-    // Tampilkan Rincian (Sub Row) yang dipecah per LPJ
     if (subLpjs.length > 0) {
         subLpjs.sort((x, y) => {
             let kX = {}; for(let k in x) kX[k.toLowerCase().trim()] = x[k];
             let kY = {}; for(let k in y) kY[k.toLowerCase().trim()] = y[k];
             return parseInt(kX['lpj_ke']||0) - parseInt(kY['lpj_ke']||0);
         });
-
         subLpjs.forEach(sub => {
             let kSub = {}; for(let k in sub) kSub[k.toLowerCase().trim()] = sub[k];
             let fmtSub = 'Rp ' + Number(sub.nominalUsed).toLocaleString('id-ID');
-            
-            let subManageRow = `<tr class="table-light"><td class="text-start ps-4 text-muted"><i class="fas fa-level-up-alt fa-rotate-90 me-2"></i> ${a.nama} LPJ_ke-${kSub['lpj_ke']}</td><td class="text-end text-muted">-</td><td class="text-end text-muted">${fmtSub}</td><td colspan="2"></td></tr>`;
-            let subInfoRow = `<tr class="table-light"><td class="text-start ps-4 text-muted"><i class="fas fa-level-up-alt fa-rotate-90 me-2"></i> ${a.nama} LPJ_ke-${kSub['lpj_ke']}</td><td class="text-end text-muted">-</td><td class="text-end text-muted">${fmtSub}</td><td class="text-center">-</td></tr>`;
-            
-            if(tbManage) tbManage.innerHTML += subManageRow;
-            if(tbInfo) tbInfo.innerHTML += subInfoRow;
+            if(tbManage) tbManage.innerHTML += `<tr class="table-light"><td class="text-start ps-4 text-muted"><i class="fas fa-level-up-alt fa-rotate-90 me-2"></i> ${a.nama} LPJ_ke-${kSub['lpj_ke']}</td><td class="text-end text-muted">-</td><td class="text-end text-muted">${fmtSub}</td><td colspan="2"></td></tr>`;
+            if(tbInfo) tbInfo.innerHTML += `<tr class="table-light"><td class="text-start ps-4 text-muted"><i class="fas fa-level-up-alt fa-rotate-90 me-2"></i> ${a.nama} LPJ_ke-${kSub['lpj_ke']}</td><td class="text-end text-muted">-</td><td class="text-end text-muted">${fmtSub}</td><td class="text-center">-</td></tr>`;
         });
     }
   });
 }
 
 function openModalAnggaran() { 
-  const sel = document.getElementById('inpJenisAnggaran');
-  sel.innerHTML = '<option value="">- Pilih Jenis Laporan -</option>';
-  
+  const sel = document.getElementById('inpJenisAnggaran'); sel.innerHTML = '<option value="">- Pilih Jenis Laporan -</option>';
   const configJenisLaporan = rawConfig.find(c => c.label.toLowerCase() === 'jenis laporan');
-  if(configJenisLaporan && configJenisLaporan.options) {
-      configJenisLaporan.options.forEach(opt => {
-          if(opt.trim()) sel.innerHTML += `<option value="${opt.trim()}">${opt.trim()}</option>`;
-      });
-  }
+  if(configJenisLaporan && configJenisLaporan.options) { configJenisLaporan.options.forEach(opt => { if(opt.trim()) sel.innerHTML += `<option value="${opt.trim()}">${opt.trim()}</option>`; }); }
   new bootstrap.Modal(document.getElementById('modalAnggaran')).show(); 
 }
 
 async function saveAnggaran() {
-  const jenis = document.getElementById('inpJenisAnggaran').value;
-  const lpjKe = document.getElementById('inpLpjKeAnggaran').value;
-  const total = document.getElementById('inpTotalAnggaran').value;
-  
+  const jenis = document.getElementById('inpJenisAnggaran').value, lpjKe = document.getElementById('inpLpjKeAnggaran').value, total = document.getElementById('inpTotalAnggaran').value;
   if(!jenis || !total) return Swal.fire('Error','Pilih Jenis Laporan dan isi Anggaran!','warning');
   let namaAkhir = lpjKe ? `${jenis} LPJ_ke-${lpjKe}` : jenis;
-
   document.getElementById('loading').classList.remove('hidden');
-  
   await callGAS('manageAnggaran', { action: 'add', anggaranData: { nama: namaAkhir, total: total } });
-  
   bootstrap.Modal.getInstance(document.getElementById('modalAnggaran')).hide(); 
-  document.getElementById('inpJenisAnggaran').value = ''; 
-  document.getElementById('inpLpjKeAnggaran').value = ''; 
-  document.getElementById('inpTotalAnggaran').value = '';
-  
-  await loadDashboardServer(true);
-  await loadAnggaranServer(); 
-  document.getElementById('loading').classList.add('hidden');
-  Swal.fire('Sukses', 'Anggaran Disimpan', 'success');
+  document.getElementById('inpJenisAnggaran').value = ''; document.getElementById('inpLpjKeAnggaran').value = ''; document.getElementById('inpTotalAnggaran').value = '';
+  await loadDashboardServer(true); await loadAnggaranServer(); document.getElementById('loading').classList.add('hidden'); Swal.fire('Sukses', 'Anggaran Disimpan', 'success');
 }
 
 async function delAnggaran(nama) {
   if(confirm('Hapus anggaran ' + nama + '?')) {
     document.getElementById('loading').classList.remove('hidden');
     await callGAS('manageAnggaran', { action: 'delete', anggaranData: {nama: nama} });
-    await loadAnggaranServer();
-    document.getElementById('loading').classList.add('hidden');
-    Swal.fire('Terhapus','','success');
+    await loadAnggaranServer(); document.getElementById('loading').classList.add('hidden'); Swal.fire('Terhapus','','success');
   }
 }
 
 async function loadDashboardServer(isBackground = false) {
-  if(!isBackground) document.getElementById('loading').classList.remove('hidden');
-  else document.getElementById('tableBody').innerHTML = '<tr><td colspan="11" class="text-center py-4"><div class="spinner-border text-primary spinner-border-sm"></div><br><small class="text-muted">Memuat data dari server...</small></td></tr>';
-  
-  const res = await callGAS('getDataLaporan');
-  if(!isBackground) document.getElementById('loading').classList.add('hidden');
+  if(!isBackground) document.getElementById('loading').classList.remove('hidden'); else document.getElementById('tableBody').innerHTML = '<tr><td colspan="11" class="text-center py-4"><div class="spinner-border text-primary spinner-border-sm"></div><br><small class="text-muted">Memuat data dari server...</small></td></tr>';
+  const res = await callGAS('getDataLaporan'); if(!isBackground) document.getElementById('loading').classList.add('hidden');
   globalHeaders = res.headers; globalData = res.data; applyFilter();
 }
 
@@ -569,13 +463,11 @@ function openPdfViewer(pdfLink) {
 function viewReviewerNotes(rowIndex) {
   const row = globalData.find(r => r._rowIndex == rowIndex);
   if(row) {
-    let kKepala = row['Komentar_Kepala'] || '<i class="text-muted">Tidak ada catatan</i>';
-    let kKomite = row['Komentar_Komite'] || '<i class="text-muted">Tidak ada catatan</i>';
+    let kKepala = row['Komentar_Kepala'] || '<i class="text-muted">Tidak ada catatan</i>'; let kKomite = row['Komentar_Komite'] || '<i class="text-muted">Tidak ada catatan</i>';
     Swal.fire({ title: 'Catatan Reviewer', html: `<div class="text-start"><b>Kepala:</b><br>${kKepala}<br><br><b>Komite:</b><br>${kKomite}</div>`, icon: 'info' });
   }
 }
 
-// RENDER TABLE (Menampilkan Nama Kegiatan + LPJ_ke-)
 function renderTable(data) {
   const tbody = document.getElementById('tableBody'); const thead = document.getElementById('tableHead'); tbody.innerHTML = '';
   thead.innerHTML = `<tr><th>Tgl</th><th>Jenis</th><th>Status</th><th>Kegiatan</th><th>Tahun Pelajaran</th><th>Semester</th><th>Bulan</th><th>Pembina/Pelatih</th><th>Ekstra</th><th>Jml Latihan</th><th>Aksi</th></tr>`;
@@ -589,15 +481,12 @@ function renderTable(data) {
     let valTahun    = cleanRow['tahun pelajaran'] || cleanRow['tahun ajaran'] || cleanRow['tahun_pelajaran'] || '-';
     let valSemester = cleanRow['semester'] || '-';
     let valBulan    = cleanRow['bulan laporan'] || cleanRow['bulan'] || '-';
-    let valPembina  = cleanRow['nama pembina/pelatih'] || cleanRow['pembina/pelatih'] || cleanRow['nama_pembina'] || cleanRow['nama pelatih'] || '-';
+    let valPembina  = cleanRow['nama pembina'] || cleanRow['nama_pembina'] || cleanRow['nama pembina 1'] || '-'; // default reading
     let valEkstra   = cleanRow['cabang ekstra'] || cleanRow['ekstra'] || cleanRow['ekstrakurikuler'] || cleanRow['cabang_ekstra'] || '-';
-    let valLatihan  = cleanRow['banyak latihan'] || cleanRow['jumlah latihan'] || cleanRow['jml latihan'] || cleanRow['banyak_latihan'] || '-';
+    let valLatihan  = cleanRow['banyak latihan'] || cleanRow['jumlah latihan'] || cleanRow['banyak latihan pembina 1'] || '-';
     
-    // Sisipkan LPJ_ke- pada Kegiatan
     let lpjKe = r['LPJ_ke'] || cleanRow['lpj_ke'] || cleanRow['lpj ke'] || '';
-    if (r['Jenis_Laporan'] === 'LPJ' && lpjKe !== '') {
-        valKegiatan = valKegiatan === '-' ? `LPJ_ke-${lpjKe}` : `${valKegiatan} LPJ_ke-${lpjKe}`;
-    }
+    if (r['Jenis_Laporan'] === 'LPJ' && lpjKe !== '') { valKegiatan = valKegiatan === '-' ? `LPJ_ke-${lpjKe}` : `${valKegiatan} LPJ_ke-${lpjKe}`; }
 
     let tr = `<tr><td>${r['Timestamp'] || '-'}</td><td>${r['Jenis_Laporan'] || '-'}</td><td><span class="badge ${badge}">${st}</span></td><td>${valKegiatan}</td><td>${valTahun}</td><td>${valSemester}</td><td>${valBulan}</td><td>${valPembina}</td><td>${valEkstra}</td><td>${valLatihan}</td><td class="text-center">`;
     
@@ -618,8 +507,7 @@ function renderTable(data) {
        }
     } 
     else if(currentUser.role === 'Kepala' || currentUser.role === 'Komite') {
-       let targetStatus = currentUser.role === 'Kepala' ? r['Status_Kepala'] : r['Status_Komite'];
-       let encodedData = encodeURIComponent(JSON.stringify(r));
+       let targetStatus = currentUser.role === 'Kepala' ? r['Status_Kepala'] : r['Status_Komite']; let encodedData = encodeURIComponent(JSON.stringify(r));
        if(targetStatus === 'Disetujui') { tr += `<button onclick="openPdfViewer('${r['Link_File_PDF']}')" class="btn btn-sm btn-success"><i class="fas fa-file-pdf me-1"></i>Lihat Dokumen</button>`; } 
        else { let bColor = targetStatus === 'Ditolak' ? 'danger' : 'primary'; tr += `<button onclick="openReviewReviewer('${encodedData}')" class="btn btn-${bColor} btn-sm"><i class="fas fa-tasks me-1"></i> Review</button>`; }
     } 
@@ -635,20 +523,15 @@ function renderTable(data) {
 
 async function actionKirim(rowIndex, field) { 
   let row = globalData.find(r => r._rowIndex == rowIndex); 
-  if(row) { 
-    row[field] = 'Terkirim'; applyFilter(); toastMsg('Berhasil dikirim!'); 
-    await callGAS('updateStatusEkstra', { rowIndex: rowIndex, field: field, value: 'Terkirim' }); 
-  } 
+  if(row) { row[field] = 'Terkirim'; applyFilter(); toastMsg('Berhasil dikirim!'); await callGAS('updateStatusEkstra', { rowIndex: rowIndex, field: field, value: 'Terkirim' }); } 
 }
 
 function returnToPetugas(rowIndex) {
   Swal.fire({ title: 'Kembalikan ke Petugas?', text: 'Tulis alasan revisi:', input: 'textarea', icon: 'warning', showCancelButton: true, confirmButtonText: 'Kembalikan', cancelButtonText: 'Batal', preConfirm: (c) => { if (!c) Swal.showValidationMessage('Catatan wajib diisi!'); return c; }
   }).then(async res => {
     if(res.isConfirmed) { 
-      let row = globalData.find(r => r._rowIndex == rowIndex); 
-      if(row) { row['Status'] = 'Revisi'; row['Komentar_Pimpinan'] = res.value; } 
-      applyFilter(); toastMsg('Berhasil dikembalikan'); 
-      await callGAS('kembalikanKePetugas', { rowIndex: rowIndex, catatan: res.value }); 
+      let row = globalData.find(r => r._rowIndex == rowIndex); if(row) { row['Status'] = 'Revisi'; row['Komentar_Pimpinan'] = res.value; } 
+      applyFilter(); toastMsg('Berhasil dikembalikan'); await callGAS('kembalikanKePetugas', { rowIndex: rowIndex, catatan: res.value }); 
     }
   });
 }
@@ -656,29 +539,22 @@ function returnToPetugas(rowIndex) {
 async function submitUpdatePimpinan() { 
   const i = document.getElementById('detailRowIndex').value, s = document.getElementById('detailStatus').value, k = document.getElementById('detailKomen').value, u = document.getElementById('detailPetugasUser').value; 
   let row = globalData.find(r => r._rowIndex == i); if(row) { row['Status'] = s; row['Komentar_Pimpinan'] = k; } 
-  closeDetail(); applyFilter(); toastMsg('Status KA TU Disimpan'); 
-  await callGAS('updateStatusLaporan', { rowIndex: i, newStatus: s, komentar: k, petugasUser: u }); 
+  closeDetail(); applyFilter(); toastMsg('Status KA TU Disimpan'); await callGAS('updateStatusLaporan', { rowIndex: i, newStatus: s, komentar: k, petugasUser: u }); 
 }
 
 async function submitReviewer() { 
   const i = document.getElementById('revRowIndex').value, st = document.getElementById('revStatus').value, k = document.getElementById('revKomen').value; 
   let row = globalData.find(r => r._rowIndex == i); if(row) { if(currentUser.role === 'Kepala') { row['Status_Kepala'] = st; row['Komentar_Kepala'] = k; } else { row['Status_Komite'] = st; row['Komentar_Komite'] = k; } } 
-  closeDetail(); applyFilter(); toastMsg('Review Disimpan'); 
-  await callGAS('updateReviewReviewer', { rowIndex: i, role: currentUser.role, status: st, komen: k }); 
+  closeDetail(); applyFilter(); toastMsg('Review Disimpan'); await callGAS('updateReviewReviewer', { rowIndex: i, role: currentUser.role, status: st, komen: k }); 
 }
 
 function openDetailPimpinan(eData) { const data = JSON.parse(decodeURIComponent(eData)); let link = data.Link_File_PDF.replace('/view', '/preview').replace('&export=download', ''); document.getElementById('pdfContainer').innerHTML = `<iframe src="${link}" class="pdf-frame"></iframe>`; document.getElementById('detailRowIndex').value = data._rowIndex; document.getElementById('detailPetugasUser').value = data.Username_Petugas; document.getElementById('detailStatus').value = data.Status === 'Pending' ? 'Disetujui KA TU' : data.Status; document.getElementById('detailKomen').value = data.Komentar_Pimpinan || ''; showPage('detail-pimpinan'); }
-
 function openReviewReviewer(eData) { const data = JSON.parse(decodeURIComponent(eData)); let link = data.Link_File_PDF.replace('/view', '/preview').replace('&export=download', ''); document.getElementById('pdfContainerReviewer').innerHTML = `<iframe src="${link}" class="pdf-frame"></iframe>`; document.getElementById('revRowIndex').value = data._rowIndex; let myKomen = currentUser.role === 'Kepala' ? (data.Komentar_Kepala || '') : (data.Komentar_Komite || ''); let myStatus = currentUser.role === 'Kepala' ? data.Status_Kepala : data.Status_Komite; if(myStatus === 'Terkirim' || myStatus === '') myStatus = 'Disetujui'; document.getElementById('revStatus').value = myStatus; document.getElementById('revKomen').value = myKomen; document.getElementById('titleReviewer').innerText = "Review " + currentUser.role; showPage('detail-reviewer'); }
-
 function showNoteForPetugas(rowIndex) { const row = globalData.find(r => r._rowIndex == rowIndex); if(row) { Swal.fire({ title: 'Catatan KA TU', text: row['Komentar_Pimpinan'] || 'Tidak ada catatan.', icon: 'info' }); } }
-
 function reviseLaporan(eData) { const data = JSON.parse(decodeURIComponent(eData)); document.getElementById('inputEditRowIndex').value = data._rowIndex; document.getElementById('inputTipeLaporan').value = data.Jenis_Laporan; document.getElementById('inputOldPdfUrl').value = data.Link_File_PDF; document.getElementById('formTitle').innerText = "Form Revisi " + data.Jenis_Laporan; document.getElementById('revisionAlert').classList.remove('hidden'); document.getElementById('btnSubmit').innerText = "Kirim Revisi"; renderForm(data.Jenis_Laporan); setTimeout(() => { document.querySelectorAll('#dynamicForm input:not([type=hidden]):not([type=file]), #dynamicForm select').forEach(el => { if(data[el.name]) el.value = data[el.name]; }); }, 100); showPage('form'); }
 
 async function loadArchive() { 
-  document.getElementById('loading').classList.remove('hidden'); 
-  const res = await callGAS('getArchiveData'); 
-  document.getElementById('loading').classList.add('hidden'); 
+  document.getElementById('loading').classList.remove('hidden'); const res = await callGAS('getArchiveData'); document.getElementById('loading').classList.add('hidden'); 
   const tbody = document.getElementById('archiveTableBody'); tbody.innerHTML = ''; 
   res.data.forEach(r => { 
     let keg = r.nama_kegiatan || r.kegiatan || r['Nama Kegiatan'] || r.Jenis_Laporan || '-';
@@ -689,18 +565,54 @@ async function loadArchive() {
 }
 
 function archiveLaporan(idx) { Swal.fire({ title: 'Arsipkan?', showCancelButton: true }).then(async res => { if(res.isConfirmed) { document.getElementById('loading').classList.remove('hidden'); await callGAS('moveToArchive', { rowIndex: idx }); await loadDashboardServer(); document.getElementById('loading').classList.add('hidden'); Swal.fire('Sukses','','success'); } }); }
-
 async function deleteLaporan(idx) { if(!confirm('Hapus permanen?')) return; await callGAS('deleteLaporan', { rowIndex: idx }); await loadDashboardServer(); }
+
+// =========================================================================
+// LOGIKA UBAH KEGIATAN UNTUK TRIGGER FILTER DROPDOWN GURU
+// =========================================================================
+function handleKegiatanChange(val, role) {
+    let kegiatan = val.trim().toLowerCase();
+    
+    // Tarik list dari MasterGuru global
+    const pembinaList = globalGuru.filter(g => g.kegiatan.toLowerCase() === kegiatan && g.tipe.toLowerCase() === 'pembina');
+    const pelatihList = globalGuru.filter(g => g.kegiatan.toLowerCase() === kegiatan && g.tipe.toLowerCase() === 'pelatih');
+
+    if(role.toLowerCase() === 'ekstrakurikuler') {
+        const selsPembina = document.querySelectorAll('.select-pembina');
+        selsPembina.forEach(s => {
+            s.innerHTML = '<option value="">- Pilih Pembina -</option>';
+            pembinaList.forEach(p => s.innerHTML += `<option value="${p.nama}">${p.nama}</option>`);
+        });
+
+        const selsPelatih = document.querySelectorAll('.select-pelatih');
+        selsPelatih.forEach(s => {
+            s.innerHTML = '<option value="">- Pilih Pelatih -</option>';
+            pelatihList.forEach(p => s.innerHTML += `<option value="${p.nama}">${p.nama}</option>`);
+        });
+    } else {
+        const selPembinaTunggal = document.querySelector('.select-pembina-tunggal');
+        if(selPembinaTunggal) {
+            selPembinaTunggal.innerHTML = '<option value="">- Pilih Pembina -</option>';
+            pembinaList.forEach(p => selPembinaTunggal.innerHTML += `<option value="${p.nama}">${p.nama}</option>`);
+        }
+    }
+}
 
 async function handleSubmit(e) {
   e.preventDefault();
   const form = document.getElementById('dynamicForm'); const obj = Object.fromEntries(new FormData(form).entries()); const fileIn = form.querySelectorAll('input[type="file"]'); obj.currentUser = currentUser.user; 
   
+  if (obj.tipeLaporan === 'LPJ' && obj.LPJ_ke) {
+      let newMatches = {};
+      for (let key in obj) { if (typeof obj[key] === 'string' && obj[key].trim() !== '') newMatches[key + '_combined'] = obj[key] + ' LPJ_ke-' + obj.LPJ_ke; }
+      Object.assign(obj, newMatches);
+  }
+
   const btn = document.getElementById('btnSubmit'); const btnText = btn.innerText; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Mengirim...'; btn.disabled = true; document.getElementById('loading').classList.remove('hidden');
 
   const processResponse = (res) => {
     document.getElementById('loading').classList.add('hidden'); btn.innerHTML = btnText; btn.disabled = false;
-    if(res === 'Sukses') { Swal.fire({ title: 'Berhasil!', text: 'Laporan Anda berhasil dikirim.', icon: 'success', timer: 2000, showConfirmButton: false }).then(async () => { form.reset(); await loadDashboardServer(true); await loadAnggaranServer(); showPage('dashboard'); }); } 
+    if(res === 'Sukses') { Swal.fire({ title: 'Berhasil!', text: 'Laporan dikirim.', icon: 'success', timer: 2000, showConfirmButton: false }).then(async () => { form.reset(); await loadDashboardServer(true); await loadAnggaranServer(); showPage('dashboard'); }); } 
     else { Swal.fire('Gagal', res, 'error'); }
   };
 
@@ -708,44 +620,49 @@ async function handleSubmit(e) {
     const f = fileIn[0].files[0], reader = new FileReader(); 
     reader.onload = async x => { 
       obj.fileData = x.target.result.split(',')[1]; obj.fileName = f.name; obj.mimeType = f.type; 
-      const res = await callGAS('submitDynamicForm', { formObject: obj });
-      processResponse(res);
+      const res = await callGAS('submitDynamicForm', { formObject: obj }); processResponse(res);
     }; 
     reader.readAsDataURL(f); 
   } else { 
-    const res = await callGAS('submitDynamicForm', { formObject: obj });
-    processResponse(res);
+    const res = await callGAS('submitDynamicForm', { formObject: obj }); processResponse(res);
   }
 }
 
 function selectRole(role) { document.getElementById('inputTipeLaporan').value = role; document.getElementById('inputEditRowIndex').value = ""; document.getElementById('formTitle').innerText = "Form Input"; document.getElementById('revisionAlert').classList.add('hidden'); document.getElementById('btnSubmit').innerText = "Kirim Laporan"; renderForm(role); showPage('form'); }
 
+// =========================================================================
+// MERENDER FORM (Otomatis membangun dropdown Pembina & Pelatih 1-10)
+// =========================================================================
 function renderForm(role) { 
   const box = document.getElementById('formBuilder'); box.innerHTML = ''; 
   const config = rawConfig.filter(i => (i.category||'umum').toLowerCase() === 'umum' || (i.category||'').toLowerCase() === role.toLowerCase());
-  
   const configJenisLaporan = rawConfig.find(c => c.label.toLowerCase() === 'jenis laporan');
 
-  config.forEach(i => { 
-    let html = `<div class="col-md-6 mb-2"><label class="small fw-bold">${i.label}</label>`; 
-    
-    let isDropdown = false;
-    let optionsToUse = [];
-
-    if (i.label.toLowerCase() === 'nama kegiatan' || i.label.toLowerCase() === 'jenis laporan') {
-        isDropdown = true;
-        if (configJenisLaporan && configJenisLaporan.options) optionsToUse = configJenisLaporan.options;
-    } 
-    else if (i.type === 'select') {
-        isDropdown = true;
-        optionsToUse = i.options;
+  config.forEach(i => {
+    // Abaikan jika FormConfig mencoba merender Pembina/Pelatih untuk Ekstrakurikuler 
+    // karena kita akan meng-generate formnya secara masal (1-10) di bawah
+    if (role.toLowerCase() === 'ekstrakurikuler' && (i.label.toLowerCase().includes('pembina') || i.label.toLowerCase().includes('pelatih') || i.label.toLowerCase().includes('latihan'))) {
+        return;
     }
 
-    if (isDropdown) {
-       html += `<select class="form-select" name="${i.key}" required><option value="">- Pilih ${i.label} -</option>`;
-       optionsToUse.forEach(o => { 
-         if(o.trim()) html += `<option value="${o.trim()}">${o.trim()}</option>`; 
-       });
+    let html = `<div class="col-md-6 mb-2"><label class="small fw-bold">${i.label}</label>`; 
+    let isDropdown = false, optionsToUse = [], onChangeAttr = "";
+
+    if (i.label.toLowerCase() === 'nama kegiatan' || i.label.toLowerCase() === 'jenis laporan' || i.label.toLowerCase() === 'cabang ekstra') {
+        isDropdown = true;
+        onChangeAttr = `onchange="handleKegiatanChange(this.value, '${role}')"`;
+        if (configJenisLaporan && configJenisLaporan.options) optionsToUse = configJenisLaporan.options;
+    } else if (i.type === 'select') {
+        isDropdown = true; optionsToUse = i.options;
+    }
+
+    // Pembuatan input dinamis khusus "Nama Pembina" pada formulir LPJ & Proposal (Dropdown bergantung pada kegiatan)
+    if (i.label.toLowerCase() === 'nama pembina' && role.toLowerCase() !== 'ekstrakurikuler') {
+        html += `<select class="form-select select-pembina-tunggal" name="${i.key}" required><option value="">- Pilih Pembina -</option></select>`;
+    }
+    else if (isDropdown) {
+       html += `<select class="form-select" name="${i.key}" ${onChangeAttr} required><option value="">- Pilih ${i.label} -</option>`;
+       optionsToUse.forEach(o => { if(o.trim()) html += `<option value="${o.trim()}">${o.trim()}</option>`; });
        html += `</select>`;
     } 
     else if(i.type === 'file') { html += `<input type="file" class="form-control" accept="application/pdf">`; } 
@@ -754,27 +671,51 @@ function renderForm(role) {
     box.innerHTML += html + `</div>`; 
   });
 
+  // --- INJEKSI 10 BARIS UNTUK EKSTRAKURIKULER ---
+  if (role.toLowerCase() === 'ekstrakurikuler') {
+     let htmlEkstra = '<div class="col-12 mt-3 mb-2"><h6 class="fw-bold border-bottom pb-2 text-primary">Data Pembina & Pelatih</h6></div>';
+     
+     // 10 Pembina
+     for(let i=1; i<=10; i++) {
+         htmlEkstra += `
+         <div class="col-md-8 mb-2">
+             <label class="small text-muted">Nama Pembina ${i}</label>
+             <select class="form-select select-pembina" name="Nama_Pembina_${i}"><option value="">- Pilih Pembina -</option></select>
+         </div>
+         <div class="col-md-4 mb-2">
+             <label class="small text-muted">Banyak Latihan</label>
+             <input type="number" class="form-control" name="Banyak_Latihan_Pembina_${i}" placeholder="0">
+         </div>`;
+     }
+     
+     // 10 Pelatih
+     for(let i=1; i<=10; i++) {
+         htmlEkstra += `
+         <div class="col-md-8 mb-2">
+             <label class="small text-muted">Nama Pelatih ${i}</label>
+             <select class="form-select select-pelatih" name="Nama_Pelatih_${i}"><option value="">- Pilih Pelatih -</option></select>
+         </div>
+         <div class="col-md-4 mb-2">
+             <label class="small text-muted">Banyak Latihan</label>
+             <input type="number" class="form-control" name="Banyak_Latihan_Pelatih_${i}" placeholder="0">
+         </div>`;
+     }
+     box.innerHTML += htmlEkstra;
+  }
+
   // --- INJEKSI FORM LPJ ---
   if (role.toLowerCase() === 'lpj') {
     let htmlLpjKe = `<div class="col-md-6 mb-2"><label class="small fw-bold">LPJ ke-</label><select class="form-select" name="LPJ_ke" required><option value="">- Pilih -</option>`;
     for(let j=1; j<=10; j++) { htmlLpjKe += `<option value="${j}">${j}</option>`; }
     htmlLpjKe += `</select></div>`;
-    
     let htmlTotalAnggaran = `<div class="col-md-6 mb-2"><label class="small fw-bold">Total Anggaran (Rp)</label><input type="number" class="form-control" name="Total_Anggaran" placeholder="Hanya angka, cth: 1500000" required></div>`;
     
     box.innerHTML += htmlLpjKe + htmlTotalAnggaran;
   }
 }
 
-async function loadConfigAndShow(id) { 
-  if(rawConfig.length === 0) rawConfig = await callGAS('getFormConfig'); 
-  showPage(id); 
-}
-
 async function loadManageUsers() { 
-  document.getElementById('loading').classList.remove('hidden'); 
-  const data = await callGAS('manageUsers', { action: 'get' }); 
-  document.getElementById('loading').classList.add('hidden'); 
+  document.getElementById('loading').classList.remove('hidden'); const data = await callGAS('manageUsers', { action: 'get' }); document.getElementById('loading').classList.add('hidden'); 
   const tbody = document.getElementById('userTableBody'); tbody.innerHTML = ''; 
   data.forEach(u => { tbody.innerHTML += `<tr><td>${u.user}</td><td>${u.nama}</td><td>${u.role}</td><td>${u.email}</td><td><button onclick="delUser('${u.user}')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></td></tr>`; }); 
 }
@@ -785,30 +726,17 @@ async function saveUser() {
   const d = { user: document.getElementById('inpUser').value, pass: document.getElementById('inpPass').value, nama: document.getElementById('inpNama').value, email: document.getElementById('inpEmail').value, role: document.getElementById('inpRole').value }; 
   if(!d.user || !d.pass) return Swal.fire('Error','Lengkapi data','warning'); 
   await callGAS('manageUsers', { action: 'add', userData: d }); 
-  bootstrap.Modal.getInstance(document.getElementById('modalUser')).hide(); 
-  loadManageUsers(); 
+  bootstrap.Modal.getInstance(document.getElementById('modalUser')).hide(); loadManageUsers(); 
 }
 
-async function delUser(u) { 
-  if(confirm('Hapus?')) {
-    await callGAS('manageUsers', { action: 'delete', userData: {oldUser: u} }); 
-    loadManageUsers(); 
-  }
-}
+async function delUser(u) { if(confirm('Hapus?')) { await callGAS('manageUsers', { action: 'delete', userData: {oldUser: u} }); loadManageUsers(); } }
 
 window.onload = async () => { 
   try {
-    const users = await callGAS('getUsernames');
-    const sel = document.getElementById('userIn');
-    sel.innerHTML = '<option value="">-- Pilih Username --</option>';
-    if (users && users.length > 0) {
-      users.forEach(u => { sel.innerHTML += `<option value="${u}">${u}</option>`; });
-    }
-  } catch (e) {
-    console.error("Gagal memuat username");
-  } finally {
-    document.getElementById('loading').classList.add('hidden');
-  }
+    const users = await callGAS('getUsernames'); const sel = document.getElementById('userIn'); sel.innerHTML = '<option value="">-- Pilih Username --</option>';
+    if (users && users.length > 0) { users.forEach(u => { sel.innerHTML += `<option value="${u}">${u}</option>`; }); }
+  } catch (e) { console.error("Gagal memuat username"); } 
+  finally { document.getElementById('loading').classList.add('hidden'); }
 };
 </script>
 </body>
