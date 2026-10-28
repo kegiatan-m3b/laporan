@@ -360,13 +360,13 @@ function showPage(id) {
   else if(id === 'dashboard') { currentPageMode = 'all'; document.getElementById('dashTitle').innerText = "Daftar Laporan"; }
   else if(id === 'profile') { document.getElementById('profNama').value = currentUser.nama; document.getElementById('profRole').value = currentUser.role; }
   else if (id === 'cetak') {
-      // Mengisi filter dropdown Cabang Ekstra dari data riwayat secara dinamis agar 100% presisi
+      // Mengisi filter dropdown Cabang Ekstra dari data riwayat secara dinamis agar 100% presisi dengan toleransi nama
       let uniqueCabang = new Set();
       globalData.forEach(r => {
           if((r.Jenis_Laporan || '').toLowerCase() === 'ekstrakurikuler') {
               let clean = {}; for(let k in r) clean[k.toLowerCase().trim()] = r[k];
-              let c = clean['cabang ekstra'] || clean['ekstra'] || clean['nama kegiatan'] || clean['kegiatan'] || clean['jenis laporan'];
-              if(c) uniqueCabang.add(c.trim());
+              let c = clean['cabang_ekstra'] || clean['cabang ekstra'] || clean['ekstra'] || clean['nama_kegiatan'] || clean['nama kegiatan'] || clean['kegiatan'] || clean['jenis laporan'];
+              if(c && c !== '-') uniqueCabang.add(c.trim());
           }
       });
       const sel = document.getElementById('cetakCabang'); sel.innerHTML = '<option value="">- Semua Cabang Ekstra -</option>';
@@ -395,7 +395,7 @@ function previewLaporan() {
      if (jenis !== 'ekstrakurikuler') return false;
      
      let clean = {}; for(let k in r) clean[k.toLowerCase().trim()] = r[k];
-     let cCabang = (clean['cabang ekstra'] || clean['ekstra'] || clean['nama kegiatan'] || clean['kegiatan'] || clean['jenis laporan'] || '').toLowerCase();
+     let cCabang = (clean['cabang_ekstra'] || clean['cabang ekstra'] || clean['ekstra'] || clean['nama_kegiatan'] || clean['nama kegiatan'] || clean['kegiatan'] || clean['jenis laporan'] || '').toLowerCase();
      let cBulan = (clean['bulan laporan'] || clean['bulan'] || '').toLowerCase();
      
      if (fCabang && !cCabang.includes(fCabang)) return false;
@@ -412,7 +412,7 @@ function previewLaporan() {
   filteredData.forEach(r => {
      let clean = {}; for(let k in r) clean[k.toLowerCase().trim()] = r[k];
      let tgl = r.Timestamp || '-';
-     let cab = clean['cabang ekstra'] || clean['ekstra'] || clean['nama kegiatan'] || clean['jenis laporan'] || '-';
+     let cab = clean['cabang_ekstra'] || clean['cabang ekstra'] || clean['ekstra'] || clean['nama_kegiatan'] || clean['nama kegiatan'] || clean['kegiatan'] || '-';
      let bul = clean['bulan laporan'] || clean['bulan'] || '-';
      let linkPdf = r.Link_File_PDF || '#';
      
@@ -582,7 +582,7 @@ function renderTable(data) {
     let valTahun    = cleanRow['tahun pelajaran'] || cleanRow['tahun ajaran'] || cleanRow['tahun_pelajaran'] || '-';
     let valSemester = cleanRow['semester'] || '-'; let valBulan = cleanRow['bulan laporan'] || cleanRow['bulan'] || '-';
     let valPembina  = cleanRow['nama pembina'] || cleanRow['nama_pembina'] || cleanRow['nama pembina 1'] || '-'; 
-    let valEkstra   = cleanRow['cabang ekstra'] || cleanRow['ekstra'] || cleanRow['ekstrakurikuler'] || cleanRow['cabang_ekstra'] || '-';
+    let valEkstra   = cleanRow['cabang_ekstra'] || cleanRow['cabang ekstra'] || cleanRow['ekstra'] || cleanRow['ekstrakurikuler'] || '-';
     let valLatihan  = cleanRow['banyak latihan'] || cleanRow['jumlah latihan'] || cleanRow['banyak latihan pembina 1'] || '-';
     let lpjKe = r['LPJ_ke'] || cleanRow['lpj_ke'] || cleanRow['lpj ke'] || '';
     if (r['Jenis_Laporan'] === 'LPJ' && lpjKe !== '') { valKegiatan = valKegiatan === '-' ? `LPJ_ke-${lpjKe}` : `${valKegiatan} LPJ_ke-${lpjKe}`; }
