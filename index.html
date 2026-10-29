@@ -80,6 +80,7 @@
         <div class="small text-white-50 px-3 mb-2 mt-2">ADMIN</div>
         <a class="nav-link" data-id="manage-user" onclick="showPage('manage-user')"><i class="fas fa-users me-2"></i> Kelola User</a>
         <a class="nav-link" data-id="manage-anggaran" onclick="showPage('manage-anggaran')"><i class="fas fa-money-check-alt me-2"></i> Kelola Anggaran</a>
+        <a class="nav-link" data-id="settings" onclick="showPage('settings')"><i class="fas fa-cogs me-2"></i> Pengaturan WA</a>
         <a class="nav-link" data-id="info-anggaran" onclick="showPage('info-anggaran')"><i class="fas fa-wallet me-2"></i> Info Anggaran</a>
       </div>
   </div>
@@ -197,7 +198,7 @@
     </div>
   </div>
 
-  <!-- MENU MANAGE USER, ANGGARAN, DSB -->
+  <!-- MENU MANAGE USER, ANGGARAN, PENGATURAN -->
   <div id="page-manage-user" class="hidden">
     <div class="glass-card">
       <div class="d-flex justify-content-between mb-3"><h4>Kelola User</h4><button onclick="openModalUser()" class="btn btn-success btn-sm"><i class="fas fa-plus"></i> Tambah User</button></div>
@@ -210,6 +211,22 @@
       <div class="table-responsive"><table class="table table-bordered table-striped small"><thead class="table-dark"><tr><th>Jenis Laporan / Kegiatan</th><th>Total Anggaran</th><th>Terpakai</th><th>Sisa</th><th>Aksi</th></tr></thead><tbody id="anggaranTableBody"></tbody></table></div>
     </div>
   </div>
+  
+  <div id="page-settings" class="hidden">
+    <div class="glass-card mx-auto" style="max-width: 600px;">
+      <h4 class="mb-4 text-center"><i class="fas fa-cogs me-2"></i> Pengaturan Notifikasi WA</h4>
+      <div class="mb-3">
+         <label class="form-label fw-bold small text-muted">Token API Fonnte</label>
+         <input type="text" id="inpFonnteToken" class="form-control" placeholder="Masukkan token Anda dari Fonnte">
+      </div>
+      <div class="mb-4">
+         <label class="form-label fw-bold small text-muted">Nomor WA Pimpinan (Tujuan Notifikasi)</label>
+         <input type="text" id="inpWAPimpinan" class="form-control" placeholder="Contoh: 081234567890">
+      </div>
+      <button onclick="saveSettings()" class="btn btn-success w-100"><i class="fas fa-save me-2"></i> Simpan Pengaturan</button>
+    </div>
+  </div>
+
   <div id="page-info-anggaran" class="hidden">
     <div class="glass-card">
       <h4 class="mb-3">Informasi Sisa Anggaran</h4>
@@ -251,6 +268,21 @@
   </div>
 </div>
 
+<!-- MODAL TAMBAHAN UNTUK DETAIL EKSTRAKURIKULER -->
+<div class="modal fade" id="modalDetailEkstra" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title"><i class="fas fa-list me-2"></i> Rincian Ekstrakurikuler</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="detailEkstraContent">
+         <!-- Content Injected via JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL USER & ANGGARAN -->
 <div class="modal fade" id="modalUser" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Tambah User</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="text" id="inpUser" class="form-control mb-2" placeholder="Username"><input type="password" id="inpPass" class="form-control mb-2" placeholder="Password"><input type="text" id="inpNama" class="form-control mb-2" placeholder="Nama Lengkap"><input type="email" id="inpEmail" class="form-control mb-2" placeholder="Email"><select id="inpRole" class="form-select mb-2"><option value="Petugas">Petugas</option><option value="Pimpinan">Pimpinan</option><option value="Kepala">Kepala</option><option value="Komite">Komite</option><option value="Admin">Admin</option></select><button onclick="saveUser()" class="btn btn-primary w-100">Simpan</button></div></div></div></div>
 <div class="modal fade" id="modalAnggaran" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Atur Total Anggaran</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><label class="small text-muted">Jenis Laporan / Kegiatan</label><select id="inpJenisAnggaran" class="form-select mb-2"><option value="">- Pilih Jenis Laporan -</option></select><label class="small text-muted">Anggaran Khusus LPJ ke- (Opsional)</label><select id="inpLpjKeAnggaran" class="form-select mb-2"><option value="">- Semua / Berlaku Umum -</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select><label class="small text-muted">Total Anggaran (Angka saja)</label><input type="number" id="inpTotalAnggaran" class="form-control mb-3" placeholder="Misal: 10000000"><button onclick="saveAnggaran()" class="btn btn-primary w-100">Simpan Anggaran</button></div></div></div></div>
@@ -280,7 +312,7 @@
 // =========================================================================
 // MASUKKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI BAWAH INI
 // =========================================================================
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxmGfjY20IPIY516EUQ7ij57FtWwwmWJ5SVX0kxdeHZyb7jAY7ZVu7Z7Tqzpr1kWc7B2Q/exec"; 
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwvAgp6LPhyibnFJ_6TTD0UhlIPIYXtnM9UM18QiLDO84daUVZQy0Xl1Kbtt_docMOZvg/exec"; 
 
 // =========================================================================
 async function callGAS(action, data = {}) {
@@ -359,8 +391,8 @@ function showPage(id) {
   else if(id === 'approved-komite') { currentPageMode = 'approved-komite'; id = 'dashboard'; document.getElementById('dashTitle').innerText = "Review Komite"; }
   else if(id === 'dashboard') { currentPageMode = 'all'; document.getElementById('dashTitle').innerText = "Daftar Laporan"; }
   else if(id === 'profile') { document.getElementById('profNama').value = currentUser.nama; document.getElementById('profRole').value = currentUser.role; }
-  else if (id === 'cetak') {
-      // Mengisi filter dropdown Cabang Ekstra dari data riwayat secara dinamis agar 100% presisi dengan toleransi nama
+  else if(id === 'settings') { loadSettings(); }
+  else if(id === 'cetak') {
       let uniqueCabang = new Set();
       globalData.forEach(r => {
           if((r.Jenis_Laporan || '').toLowerCase() === 'ekstrakurikuler') {
@@ -382,6 +414,23 @@ function showPage(id) {
   if(id === 'manage-anggaran' || id === 'info-anggaran') { loadDashboardServer(true).then(() => loadAnggaranServer()); }
 }
 
+async function loadSettings() {
+   document.getElementById('loading').classList.remove('hidden');
+   const res = await callGAS('manageSettings', {action: 'get'});
+   document.getElementById('inpFonnteToken').value = res.FonnteToken || '';
+   document.getElementById('inpWAPimpinan').value = res.WAPimpinan || '';
+   document.getElementById('loading').classList.add('hidden');
+}
+
+async function saveSettings() {
+   const token = document.getElementById('inpFonnteToken').value;
+   const wa = document.getElementById('inpWAPimpinan').value;
+   document.getElementById('loading').classList.remove('hidden');
+   await callGAS('manageSettings', {action: 'save', payload: {token: token, wa: wa}});
+   document.getElementById('loading').classList.add('hidden');
+   Swal.fire('Sukses', 'Pengaturan berhasil disimpan', 'success');
+}
+
 // =========================================================================
 // LOGIKA CETAK (PDF & WORD) DAN PREVIEW POP-UP
 // =========================================================================
@@ -389,7 +438,6 @@ function previewLaporan() {
   const fCabang = document.getElementById('cetakCabang').value.toLowerCase();
   const fBulan = document.getElementById('cetakBulan').value.toLowerCase();
   
-  // Perbaikan Filter Anti "Data Kosong"
   let filteredData = globalData.filter(r => {
      let jenis = (r.Jenis_Laporan || '').trim().toLowerCase();
      if (jenis !== 'ekstrakurikuler') return false;
@@ -571,6 +619,32 @@ function viewReviewerNotes(rowIndex) {
   const row = globalData.find(r => r._rowIndex == rowIndex);
   if(row) { let kKepala = row['Komentar_Kepala'] || '<i class="text-muted">Tidak ada catatan</i>'; let kKomite = row['Komentar_Komite'] || '<i class="text-muted">Tidak ada catatan</i>'; Swal.fire({ title: 'Catatan Reviewer', html: `<div class="text-start"><b>Kepala:</b><br>${kKepala}<br><br><b>Komite:</b><br>${kKomite}</div>`, icon: 'info' }); }
 }
+
+function openDetailEkstra(eData) {
+    const r = JSON.parse(decodeURIComponent(eData));
+    let clean = {}; for(let k in r) clean[k.toLowerCase().trim()] = r[k];
+    let cab = clean['cabang_ekstra'] || clean['cabang ekstra'] || clean['ekstra'] || clean['nama_kegiatan'] || clean['nama kegiatan'] || clean['kegiatan'] || '-';
+    let bul = clean['bulan laporan'] || clean['bulan'] || '-';
+    let tahun = clean['tahun pelajaran'] || clean['tahun ajaran'] || clean['tahun_pelajaran'] || '-';
+    let semester = clean['semester'] || '-';
+    
+    let strPembina = "", strPelatih = "";
+    for(let i=1; i<=10; i++) {
+        let pName = r[`Nama_Pembina_${i}`] || clean[`nama_pembina_${i}`];
+        let pLat = r[`Banyak_Latihan_Pembina_${i}`] || clean[`banyak_latihan_pembina_${i}`];
+        if(pName && pName !== '-' && pName !== '') strPembina += `<li><b>${pName}</b> (${pLat}x Latihan)</li>`;
+        let plName = r[`Nama_Pelatih_${i}`] || clean[`nama_pelatih_${i}`];
+        let plLat = r[`Banyak_Latihan_Pelatih_${i}`] || clean[`banyak_latihan_pelatih_${i}`];
+        if(plName && plName !== '-' && plName !== '') strPelatih += `<li><b>${plName}</b> (${plLat}x Latihan)</li>`;
+    }
+    strPembina = strPembina ? `<ul style="margin:0; padding-left:15px;">${strPembina}</ul>` : '<i>Tidak ada data</i>';
+    strPelatih = strPelatih ? `<ul style="margin:0; padding-left:15px;">${strPelatih}</ul>` : '<i>Tidak ada data</i>';
+
+    let html = `<table class="table table-bordered"><tr><th class="bg-light w-25">Cabang Ekstra</th><td>${cab}</td></tr><tr><th class="bg-light">Tahun / Semester</th><td>${tahun} / ${semester}</td></tr><tr><th class="bg-light">Bulan</th><td>${bul}</td></tr><tr><th class="bg-light">Data Pembina</th><td>${strPembina}</td></tr><tr><th class="bg-light">Data Pelatih</th><td>${strPelatih}</td></tr></table>`;
+    document.getElementById('detailEkstraContent').innerHTML = html;
+    new bootstrap.Modal(document.getElementById('modalDetailEkstra')).show();
+}
+
 function renderTable(data) {
   const tbody = document.getElementById('tableBody'); const thead = document.getElementById('tableHead'); tbody.innerHTML = '';
   thead.innerHTML = `<tr><th>Tgl</th><th>Jenis</th><th>Status</th><th>Kegiatan</th><th>Tahun Pelajaran</th><th>Semester</th><th>Bulan</th><th>Pembina/Pelatih</th><th>Ekstra</th><th>Jml Latihan</th><th>Aksi</th></tr>`;
@@ -586,10 +660,17 @@ function renderTable(data) {
     let valLatihan  = cleanRow['banyak latihan'] || cleanRow['jumlah latihan'] || cleanRow['banyak latihan pembina 1'] || '-';
     let lpjKe = r['LPJ_ke'] || cleanRow['lpj_ke'] || cleanRow['lpj ke'] || '';
     if (r['Jenis_Laporan'] === 'LPJ' && lpjKe !== '') { valKegiatan = valKegiatan === '-' ? `LPJ_ke-${lpjKe}` : `${valKegiatan} LPJ_ke-${lpjKe}`; }
-    let tr = `<tr><td>${r['Timestamp'] || '-'}</td><td>${r['Jenis_Laporan'] || '-'}</td><td><span class="badge ${badge}">${st}</span></td><td>${valKegiatan}</td><td>${valTahun}</td><td>${valSemester}</td><td>${valBulan}</td><td>${valPembina}</td><td>${valEkstra}</td><td>${valLatihan}</td><td class="text-center">`;
+    
+    let btnDetail = "";
+    if (r['Jenis_Laporan'] === 'Ekstrakurikuler') {
+        let enc = encodeURIComponent(JSON.stringify(r));
+        btnDetail = `<button onclick="openDetailEkstra('${enc}')" class="btn btn-sm btn-dark mb-1 w-100"><i class="fas fa-list me-1"></i> Detail Ekstra</button><br>`;
+    }
+
+    let tr = `<tr><td>${r['Timestamp'] || '-'}</td><td>${r['Jenis_Laporan'] || '-'}</td><td><span class="badge ${badge}">${st}</span></td><td>${valKegiatan}</td><td>${valTahun}</td><td>${valSemester}</td><td>${valBulan}</td><td>${valPembina}</td><td>${valEkstra}</td><td>${valLatihan}</td><td class="text-center">${btnDetail}`;
     if(currentUser.role === 'Pimpinan') {
        if(st === 'Disetujui KA TU') {
-          let btnAksi = `<button onclick="openPdfViewer('${r['Link_File_PDF']}')" class="btn btn-sm btn-success mb-1"><i class="fas fa-file-pdf"></i> Lihat File</button><br>`;
+          let btnAksi = `<button onclick="openPdfViewer('${r['Link_File_PDF']}')" class="btn btn-sm btn-success mb-1 w-100"><i class="fas fa-file-pdf"></i> Lihat File</button><br>`;
           if(r['Jenis_Laporan'] !== 'Ekstrakurikuler') {
              if(!r['Status_Kepala'] || r['Status_Kepala'] === '') { btnAksi += `<button onclick="actionKirim('${r._rowIndex}','Status_Kepala')" class="btn btn-warning btn-sm m-1"><i class="fas fa-paper-plane"></i> Kirim Kepala</button>`; } else { let bCol = r['Status_Kepala'] === 'Disetujui' ? 'success' : (r['Status_Kepala'] === 'Ditolak' ? 'danger' : 'secondary'); btnAksi += `<span class="badge bg-${bCol} m-1">${r['Status_Kepala']} Kepala</span>`; }
              if(!r['Status_Komite'] || r['Status_Komite'] === '') { btnAksi += `<button onclick="actionKirim('${r._rowIndex}','Status_Komite')" class="btn btn-warning btn-sm m-1"><i class="fas fa-paper-plane"></i> Kirim Komite</button>`; } else { let bCol = r['Status_Komite'] === 'Disetujui' ? 'success' : (r['Status_Komite'] === 'Ditolak' ? 'danger' : 'secondary'); btnAksi += `<span class="badge bg-${bCol} m-1">${r['Status_Komite']} Komite</span>`; }
@@ -597,15 +678,15 @@ function renderTable(data) {
           }
           if(r['Status_Kepala'] === 'Disetujui' || r['Status_Kepala'] === 'Ditolak' || r['Status_Komite'] === 'Disetujui' || r['Status_Komite'] === 'Ditolak') { btnAksi += `<button onclick="viewReviewerNotes('${r._rowIndex}')" class="btn btn-info btn-sm m-1" title="Lihat Catatan Reviewer"><i class="fas fa-eye"></i></button>`; }
           tr += btnAksi;
-       } else if (st === 'Ditolak') { tr += `<button onclick="openPdfViewer('${r['Link_File_PDF']}')" class="btn btn-sm btn-danger"><i class="fas fa-file-pdf me-1"></i>Lihat File</button>`; } 
+       } else if (st === 'Ditolak') { tr += `<button onclick="openPdfViewer('${r['Link_File_PDF']}')" class="btn btn-sm btn-danger w-100"><i class="fas fa-file-pdf me-1"></i>Lihat File</button>`; } 
        else { let encodedData = encodeURIComponent(JSON.stringify(r)); tr += `<div class="d-flex justify-content-center gap-1"><button onclick="viewReviewerNotes('${r._rowIndex}')" class="btn btn-info btn-sm" title="Lihat Catatan Reviewer"><i class="fas fa-eye"></i></button><button onclick="openDetailPimpinan('${encodedData}')" class="btn btn-primary btn-sm flex-shrink-0">Review</button></div>`; }
     } else if(currentUser.role === 'Kepala' || currentUser.role === 'Komite') {
        let targetStatus = currentUser.role === 'Kepala' ? r['Status_Kepala'] : r['Status_Komite']; let encodedData = encodeURIComponent(JSON.stringify(r));
-       if(targetStatus === 'Disetujui') { tr += `<button onclick="openPdfViewer('${r['Link_File_PDF']}')" class="btn btn-sm btn-success"><i class="fas fa-file-pdf me-1"></i>Lihat Dokumen</button>`; } else { let bColor = targetStatus === 'Ditolak' ? 'danger' : 'primary'; tr += `<button onclick="openReviewReviewer('${encodedData}')" class="btn btn-${bColor} btn-sm"><i class="fas fa-tasks me-1"></i> Review</button>`; }
+       if(targetStatus === 'Disetujui') { tr += `<button onclick="openPdfViewer('${r['Link_File_PDF']}')" class="btn btn-sm btn-success w-100"><i class="fas fa-file-pdf me-1"></i>Lihat File</button>`; } else { let bColor = targetStatus === 'Ditolak' ? 'danger' : 'primary'; tr += `<button onclick="openReviewReviewer('${encodedData}')" class="btn btn-${bColor} btn-sm w-100"><i class="fas fa-tasks me-1"></i> Review</button>`; }
     } else {
        if(r['Link_File_PDF']) tr += `<button onclick="openPdfViewer('${r['Link_File_PDF']}')" class="btn btn-sm btn-info me-1" title="Lihat PDF"><i class="fas fa-file-pdf"></i></button>`;
        if(st === 'Disetujui KA TU') { tr += `<button onclick="archiveLaporan('${r._rowIndex}')" class="btn btn-secondary btn-sm me-1"><i class="fas fa-archive"></i></button><button onclick="deleteLaporan('${r._rowIndex}')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>`; } 
-       else if (st === 'Revisi') { tr += `<button onclick="showNoteForPetugas('${r._rowIndex}')" class="btn btn-warning btn-sm me-1" title="Lihat Catatan KA TU"><i class="fas fa-eye"></i></button>`; let encodedData = encodeURIComponent(JSON.stringify(r)); tr += `<button onclick="reviseLaporan('${encodedData}')" class="btn btn-primary btn-sm me-1" title="Upload Revisi"><i class="fas fa-upload"></i> Revisi</button>`; } 
+       else if (st === 'Revisi') { tr += `<button onclick="showNoteForPetugas('${r._rowIndex}')" class="btn btn-warning btn-sm me-1" title="Lihat Catatan KA TU"><i class="fas fa-eye"></i></button>`; let encodedData = encodeURIComponent(JSON.stringify(r)); tr += `<button onclick="reviseLaporan('${encodedData}')" class="btn btn-primary btn-sm me-1" title="Upload Revisi"><i class="fas fa-upload"></i></button>`; } 
        else { tr += `<button onclick="deleteLaporan('${r._rowIndex}')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>`; }
     }
     tr += '</td></tr>'; tbody.innerHTML += tr;
