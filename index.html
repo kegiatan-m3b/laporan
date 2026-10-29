@@ -302,21 +302,28 @@
 <script>
 // =========================================================================
 // MASUKKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI BAWAH INI
+// PASTIKAN ANDA SUDAH KLIK "NEW DEPLOYMENT" DI GOOGLE APPS SCRIPT
 // =========================================================================
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxTWGbHXhVriqZOFW-V5FswrvPT17fPfqiVEYVUMnsQ_IaB6VQyrwmWoFlEyt52rbyDfg/exec"; 
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzJkO9vd_gOW27uj_nyStmqzsZ1eQuKdMZamzPxcPYvBz_727wmwfMaDpTssx2NnyvC/exec"; 
 
 // =========================================================================
 async function callGAS(action, data = {}) {
   try {
+    // Pengiriman melalui form-data untuk 100% bypass CORS di browser manapun
+    const formData = new URLSearchParams();
+    formData.append("action", action);
+    formData.append("data", JSON.stringify(data));
+    
     const response = await fetch(GAS_URL, { 
-      method: 'POST', redirect: 'follow', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
-      body: JSON.stringify({ action: action, data: data }) 
+      method: 'POST', 
+      body: formData 
     });
+    
     if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
     return await response.json();
   } catch (error) {
     document.getElementById('loading').classList.add('hidden');
-    Swal.fire({ title: 'Koneksi Terputus!', text: 'Gagal terhubung ke Database. Pastikan link URL sudah diubah dan Google Script di-deploy dengan akses "Anyone".', icon: 'error' });
+    Swal.fire({ title: 'Koneksi Terputus!', text: 'Gagal terhubung ke Server. Pastikan Link URL sudah diubah dan Google Script di-deploy dengan pengaturan "Execute as: Me" dan "Anyone".', icon: 'error' });
     throw error;
   }
 }
@@ -736,7 +743,7 @@ async function handleSubmit(e) {
         let waInfo = res.split('|')[1] || '';
         let textMsg = obj.editRowIndex ? 'Revisi Laporan Anda berhasil dikirim.' : 'Laporan berhasil dikirim.';
         
-        if (waInfo === 'Terkirim') textMsg += '\n\n✅ Pesan Notifikasi WA berhasil diteruskan ke Pimpinan.';
+        if (waInfo === 'Terkirim') textMsg += '\n\n✅ Notifikasi WA berhasil dikirim ke Pimpinan.';
         else if (waInfo) textMsg += '\n\n⚠️ Laporan tersimpan, tetapi WA GAGAL: ' + waInfo;
         
         Swal.fire({ title: 'Berhasil!', text: textMsg, icon: 'success' }).then(async () => { form.reset(); await loadDashboardServer(true); await loadAnggaranServer(); showPage('dashboard'); }); 
@@ -774,4 +781,45 @@ function renderForm(role) {
     box.innerHTML += html + `</div>`; 
   });
 
-  if (role.toLowerCase() === 'ek
+  if (role.toLowerCase() === 'ekstrakurikuler') {
+     let htmlEkstra = '<div class="col-12 mt-3 mb-2"><h6 class="fw-bold border-bottom pb-2 text-primary">Data Pembina & Pelatih</h6><small class="text-muted">Isi minimal 1 Pembina ATAU 1 Pelatih. Biarkan kosong jika tidak ada.</small></div>';
+     for(let i=1; i<=10; i++) {
+         htmlEkstra += `<div class="col-md-8 mb-2"><label class="small text-muted">Nama Pembina ${i}</label><select class="form-select select-pembina" name="Nama_Pembina_${i}"><option value="">- Pilih Pembina -</option></select></div><div class="col-md-4 mb-2"><label class="small text-muted">Banyak Latihan Pembina</label><input type="number" class="form-control" name="Banyak_Latihan_Pembina_${i}" placeholder="0"></div>`;
+     }
+     for(let i=1; i<=10; i++) {
+         htmlEkstra += `<div class="col-md-8 mb-2"><label class="small text-muted">Nama Pelatih ${i}</label><select class="form-select select-pelatih" name="Nama_Pelatih_${i}"><option value="">- Pilih Pelatih -</option></select></div><div class="col-md-4 mb-2"><label class="small text-muted">Banyak Latihan Pelatih</label><input type="number" class="form-control" name="Banyak_Latihan_Pelatih_${i}" placeholder="0"></div>`;
+     }
+     box.innerHTML += htmlEkstra;
+  }
+
+  if (role.toLowerCase() === 'lpj') {
+    let htmlLpjKe = `<div class="col-md-6 mb-2"><label class="small fw-bold">LPJ ke-</label><select class="form-select" name="LPJ_ke" required><option value="">- Pilih -</option>`;
+    for(let j=1; j<=10; j++) { htmlLpjKe += `<option value="${j}">${j}</option>`; }
+    htmlLpjKe += `</select></div>`; let htmlTotalAnggaran = `<div class="col-md-6 mb-2"><label class="small fw-bold">Total Anggaran (Rp)</label><input type="number" class="form-control" name="Total_Anggaran" placeholder="Hanya angka, cth: 1500000" required></div>`;
+    box.innerHTML += htmlLpjKe + htmlTotalAnggaran;
+  }
+}
+
+async function loadManageUsers() { document.getElementById('loading').classList.remove('hidden'); const data = await callGAS('manageUsers', { action: 'get' }); document.getElementById('loading').classList.add('hidden'); const tbody = document.getElementById('userTableBody'); tbody.innerHTML = ''; data.forEach(u => { tbody.innerHTML += `<tr><td>${u.user}</td><td>${u.nama}</td><td>${u.role}</td><td>${u.email}</td><td><button onclick="delUser('${u.user}')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button></td></tr>`; }); }
+function openModalUser() { new bootstrap.Modal(document.getElementById('modalUser')).show(); }
+async function saveUser() { const d = { user: document.getElementById('inpUser').value, pass: document.getElementById('inpPass').value, nama: document.getElementById('inpNama').value, email: document.getElementById('inpEmail').value, role: document.getElementById('inpRole').value }; if(!d.user || !d.pass) return Swal.fire('Error','Lengkapi data','warning'); await callGAS('manageUsers', { action: 'add', userData: d }); bootstrap.Modal.getInstance(document.getElementById('modalUser')).hide(); loadManageUsers(); }
+async function delUser(u) { if(confirm('Hapus?')) { await callGAS('manageUsers', { action: 'delete', userData: {oldUser: u} }); loadManageUsers(); } }
+
+window.onload = async () => { 
+  const fallbackTimer = setTimeout(() => {
+     if(!document.getElementById('loading').classList.contains('hidden')) {
+         document.getElementById('loading').classList.add('hidden');
+         Swal.fire({ title: 'Koneksi Terputus!', text: 'Pastikan Link URL sudah diubah dan Google Script di-deploy dengan pengaturan "Execute as: Me" dan "Anyone".', icon: 'error' });
+     }
+  }, 10000); 
+
+  try {
+    const users = await callGAS('getUsernames'); clearTimeout(fallbackTimer); 
+    const sel = document.getElementById('userIn'); sel.innerHTML = '<option value="">-- Pilih Username --</option>';
+    if (users && users.length > 0) { users.forEach(u => { sel.innerHTML += `<option value="${u}">${u}</option>`; }); }
+  } catch (e) { clearTimeout(fallbackTimer); console.error("Gagal memuat username:", e); } 
+  finally { document.getElementById('loading').classList.add('hidden'); }
+};
+</script>
+</body>
+</html>
